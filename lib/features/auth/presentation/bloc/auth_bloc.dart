@@ -15,6 +15,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthUserChanged>(_onUserChanged);
     on<AuthSignUpRequested>(_onSignUp);
     on<AuthSignInRequested>(_onSignIn);
+    on<AuthGoogleSignInRequested>(_onGoogleSignIn);
     on<AuthSignOutRequested>(_onSignOut);
     on<AuthPasswordResetRequested>(_onPasswordReset);
 
@@ -69,6 +70,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
       );
+      emit(state.copyWith());
+    } on AuthFailure catch (failure) {
+      emit(state.copyWith(errorMessage: failure.message));
+    }
+  }
+
+  Future<void> _onGoogleSignIn(
+    AuthGoogleSignInRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true));
+    try {
+      await _authRepository.signInWithGoogle();
       emit(state.copyWith());
     } on AuthFailure catch (failure) {
       emit(state.copyWith(errorMessage: failure.message));

@@ -7,7 +7,7 @@ import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import 'sign_up_page.dart';
 
-/// Email and password login screen.
+/// Email/password and Google login screen.
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -35,6 +35,10 @@ class _LoginPageState extends State<LoginPage> {
             password: _passwordController.text,
           ),
         );
+  }
+
+  void _googleSignIn() {
+    context.read<AuthBloc>().add(const AuthGoogleSignInRequested());
   }
 
   void _forgotPassword() {
@@ -111,17 +115,28 @@ class _LoginPageState extends State<LoginPage> {
                     buildWhen: (previous, current) =>
                         previous.isLoading != current.isLoading,
                     builder: (context, state) {
-                      return FilledButton(
-                        onPressed: state.isLoading ? null : _submit,
-                        child: state.isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Text('Log in'),
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          FilledButton(
+                            onPressed: state.isLoading ? null : _submit,
+                            child: state.isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text('Log in'),
+                          ),
+                          const SizedBox(height: 12),
+                          OutlinedButton.icon(
+                            onPressed: state.isLoading ? null : _googleSignIn,
+                            icon: const Icon(Icons.account_circle_outlined),
+                            label: const Text('Continue with Google'),
+                          ),
+                        ],
                       );
                     },
                   ),

@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../domain/auth_failure.dart';
 import '../../domain/entities/app_user.dart';
@@ -9,7 +10,12 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({FirebaseAuth? firebaseAuth})
       : _auth = firebaseAuth ?? FirebaseAuth.instance;
 
+  /// The web client ID from google-services.json (client_type 3).
+  static const String _webClientId =
+      '647214709434-4keggnmkhdvm1iebq963ih7jccmlbnpr.apps.googleusercontent.com';
+
   final FirebaseAuth _auth;
+  bool _googleInitialized = false;
 
   AppUser? _toAppUser(User? user) {
     if (user == null) return null;
@@ -56,8 +62,42 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  /// The Google sign-in plugin must be set up once before it is used.
+  Future<void> _ensureGoogleInitialized() async {
+    if (_googleInitialized) return;
+    await GoogleSignIn.instance.initialize(serverClientId: _webClientId);
+    _googleInitialized = true;
+  }
+
   @override
-  Future<void> signOut() => _auth.signOut();
+  Future<AppUser> signInWithGoogle() async {
+    try {
+      await _ensureGoogleInitialized();
+      final account = await GoogleSignIn.instance.authenticate();
+      final idToken = account.authentication.idToken;
+      if (idToken == null) {
+        throw const AuthFailure('Google sign-in failed. Please try again.');
+      }
+      final credential = GoogleAuthProvider.credential(idToken: idToken);
+      final result = await _auth.signInWithCredential(credential);
+      return _toAppUser(result.user)!;
+    } on GoogleSignInException catch (error) {
+      if (error.code == GoogleSignInExceptionCode.canceled) {
+        throw const AuthFailure('Google sign-in was cancelled.');
+      }
+      throw const AuthFailure('Google sign-in failed. Please try again.');
+    } on FirebaseAuthException catch (error) {
+      throw AuthFailure(_messageFor(error));
+    }
+  }
+
+  @override
+  Future<void> signOut() async {
+    await _auth.signOut();
+    if (_googleInitialized) {
+      await GoogleSignIn.instance.signOut();
+    }
+  }
 
   @override
   Future<void> sendPasswordReset(String email) async {
