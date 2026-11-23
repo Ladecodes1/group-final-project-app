@@ -1,9 +1,8 @@
 import 'package:equatable/equatable.dart';
 
-/// A person who uses the app (pure Dart, no Firebase).
-/// Named AppUser so it is not confused with Firebase's own User class.
-class AppUser extends Equatable {
-  const AppUser({
+/// A person's profile in the StudyLink app.
+class UserProfile extends Equatable {
+  const UserProfile({
     required this.uid,
     required this.displayName,
     required this.email,
@@ -18,5 +17,11 @@ class AppUser extends Equatable {
   final DateTime createdAt;
 
   @override
-  List<Object?> get props => [uid, displayName, email, university, createdAt];
+  List<Object?> get props => [
+        uid,
+        displayName,
+        email,
+        university,
+        createdAt,
+      ];
 }

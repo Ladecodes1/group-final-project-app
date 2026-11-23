@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../core/error/app_exception.dart';
-import '../../domain/entities/app_user.dart';
+import '../../domain/entities/user_profile.dart';
 
-/// Converts between a Firestore document and an [AppUser].
+/// Converts between a Firestore document and an [UserProfile].
 /// Field names match the `users` table in the ERD.
-class UserModel extends AppUser {
+class UserModel extends UserProfile {
   const UserModel({
     required super.uid,
     required super.displayName,
@@ -45,3 +45,4 @@ class UserModel extends AppUser {
     };
   }
 }
+

@@ -1,4 +1,4 @@
-import '../entities/app_user.dart';
+import '../entities/user_profile.dart';
 
 /// What the app can do with user profiles. The sign-in code calls
 /// [createUserIfAbsent] right after a successful registration or Google
@@ -14,10 +14,10 @@ abstract class UserRepository {
   });
 
   /// READ: one profile by uid.
-  Future<AppUser> getUser(String uid);
+  Future<UserProfile> getUser(String uid);
 
   /// READ: live profile, so the screen updates after an edit.
-  Stream<AppUser> watchUser(String uid);
+  Stream<UserProfile> watchUser(String uid);
 
   /// UPDATE: changes the name and university.
   Future<void> updateProfile({
@@ -29,3 +29,4 @@ abstract class UserRepository {
   /// DELETE: removes the profile document (not the sign-in account).
   Future<void> deleteUser(String uid);
 }
+

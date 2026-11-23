@@ -1,6 +1,6 @@
 import '../../../../core/error/app_exception.dart';
 import '../../../../core/error/firebase_error_mapper.dart';
-import '../../domain/entities/app_user.dart';
+import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/user_repository.dart';
 import '../datasources/user_remote_datasource.dart';
 
@@ -34,12 +34,12 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<AppUser> getUser(String uid) {
+  Future<UserProfile> getUser(String uid) {
     return guardFirebase(() => _remote.getUser(uid));
   }
 
   @override
-  Stream<AppUser> watchUser(String uid) {
+  Stream<UserProfile> watchUser(String uid) {
     return _remote.watchUser(uid).handleError(rethrowFriendly);
   }
 
@@ -80,3 +80,4 @@ class UserRepositoryImpl implements UserRepository {
     return (name: cleanName, university: cleanUniversity);
   }
 }
+
