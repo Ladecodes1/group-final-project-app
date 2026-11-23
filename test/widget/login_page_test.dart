@@ -1,54 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:studylink/features/auth/domain/auth_failure.dart';
-import 'package:studylink/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:studylink/features/auth/presentation/pages/login_page.dart';
-import 'package:studylink/features/auth/presentation/pages/sign_up_page.dart';
 
-import '../helpers/fake_auth_repository.dart';
-import '../helpers/pump_app.dart';
+import '../helpers/pump_studylink_app.dart';
 
 void main() {
-  late FakeAuthRepository repository;
-  late AuthBloc bloc;
+  final emailField = find.byType(TextFormField).at(0);
+  final passwordField = find.byType(TextFormField).at(1);
+  final signInButton = find.text('Sign in');
 
-  final emailField = find.widgetWithText(TextFormField, 'Email');
-  final passwordField = find.widgetWithText(TextFormField, 'Password');
-  final loginButton = find.widgetWithText(FilledButton, 'Log in');
-
-  /// Creates the fake repository and bloc inside the test itself, so the
-  /// bloc runs on the widget tester's clock and its updates reach the UI.
-  void createBloc() {
-    repository = FakeAuthRepository();
-    bloc = AuthBloc(authRepository: repository);
-    addTearDown(() async {
-      await bloc.close();
-      await repository.dispose();
-    });
-  }
-
-  testWidgets('shows the email, password and both sign-in buttons', (
+  testWidgets('shows the email, password and both sign-in options', (
     tester,
   ) async {
-    createBloc();
-    await pumpWithBloc(tester, bloc, const LoginPage());
+    await pumpStudyLinkApp(tester);
 
-    expect(find.text('Welcome to StudyLink'), findsOneWidget);
-    expect(emailField, findsOneWidget);
-    expect(passwordField, findsOneWidget);
-    expect(loginButton, findsOneWidget);
+    expect(
+      find.text('Stuck on a topic? A classmate has been there.'),
+      findsOneWidget,
+    );
+    expect(find.text('ALU email'), findsOneWidget);
+    expect(find.text('Password'), findsOneWidget);
+    expect(signInButton, findsOneWidget);
     expect(find.text('Continue with Google'), findsOneWidget);
     expect(find.text('Forgot password?'), findsOneWidget);
+    expect(find.text('Create an account'), findsOneWidget);
   });
 
-  testWidgets('blank form shows validation errors and does not log in', (
+  testWidgets('blank form shows validation errors and does not sign in', (
     tester,
   ) async {
-    createBloc();
-    await pumpWithBloc(tester, bloc, const LoginPage());
+    final repository = await pumpStudyLinkApp(tester);
 
-    await tester.tap(loginButton);
-    await tester.pump();
+    await tapVisible(tester, signInButton);
 
     expect(find.text('Please enter your email.'), findsOneWidget);
     expect(find.text('Please enter a password.'), findsOneWidget);
@@ -58,13 +41,11 @@ void main() {
   testWidgets('invalid email and short password show clear errors', (
     tester,
   ) async {
-    createBloc();
-    await pumpWithBloc(tester, bloc, const LoginPage());
+    final repository = await pumpStudyLinkApp(tester);
 
     await tester.enterText(emailField, 'not-an-email');
     await tester.enterText(passwordField, '123');
-    await tester.tap(loginButton);
-    await tester.pump();
+    await tapVisible(tester, signInButton);
 
     expect(find.text('Enter a valid email address.'), findsOneWidget);
     expect(
@@ -74,65 +55,62 @@ void main() {
     expect(repository.signInCalls, 0);
   });
 
-  testWidgets('valid details are sent to the bloc', (tester) async {
-    createBloc();
-    await pumpWithBloc(tester, bloc, const LoginPage());
+  testWidgets('valid details sign the student in and open Home', (
+    tester,
+  ) async {
+    final repository = await pumpStudyLinkApp(tester);
 
     await tester.enterText(emailField, 'student@alustudent.com');
     await tester.enterText(passwordField, 'secret1');
-    await tester.tap(loginButton);
-    await tester.pumpAndSettle();
+    await tapVisible(tester, signInButton);
 
     expect(repository.signInCalls, 1);
     expect(repository.lastEmail, 'student@alustudent.com');
+    expect(find.text('Your next session'), findsOneWidget);
   });
 
-  testWidgets('a failed login shows the error in a snack bar', (tester) async {
-    createBloc();
+  testWidgets('a failed sign-in shows the error and lets the user try again', (
+    tester,
+  ) async {
+    final repository = await pumpStudyLinkApp(tester);
     repository.failure = const AuthFailure('Incorrect email or password.');
-    await pumpWithBloc(tester, bloc, const LoginPage());
 
     await tester.enterText(emailField, 'student@alustudent.com');
     await tester.enterText(passwordField, 'wrong12');
-    await tester.tap(loginButton);
-    await tester.pumpAndSettle();
+    await tapVisible(tester, signInButton);
 
     expect(find.text('Incorrect email or password.'), findsOneWidget);
-    // The button is usable again so the user can retry.
-    expect(tester.widget<FilledButton>(loginButton).onPressed, isNotNull);
+    // Regression check: the button is not stuck on "Signing in…".
+    expect(signInButton, findsOneWidget);
+    expect(find.text('Signing in…'), findsNothing);
   });
 
   testWidgets('Continue with Google starts Google sign-in', (tester) async {
-    createBloc();
-    await pumpWithBloc(tester, bloc, const LoginPage());
+    final repository = await pumpStudyLinkApp(tester);
 
-    await tester.tap(find.text('Continue with Google'));
-    await tester.pumpAndSettle();
+    await tapVisible(tester, find.text('Continue with Google'));
 
     expect(repository.googleCalls, 1);
+    expect(find.text('Your next session'), findsOneWidget);
   });
 
   group('Forgot password', () {
     testWidgets('asks for an email first when the field is empty', (
       tester,
     ) async {
-      createBloc();
-      await pumpWithBloc(tester, bloc, const LoginPage());
+      final repository = await pumpStudyLinkApp(tester);
 
-      await tester.tap(find.text('Forgot password?'));
-      await tester.pump();
+      await tapVisible(tester, find.text('Forgot password?'));
 
-      expect(find.text('Enter your email above first.'), findsOneWidget);
+      expect(find.text('Enter your email address first.'), findsOneWidget);
       expect(repository.resetCalls, 0);
     });
 
     testWidgets('sends a reset email and confirms it', (tester) async {
-      createBloc();
-      await pumpWithBloc(tester, bloc, const LoginPage());
+      final repository = await pumpStudyLinkApp(tester);
 
       await tester.enterText(emailField, 'student@alustudent.com');
-      await tester.tap(find.text('Forgot password?'));
-      await tester.pumpAndSettle();
+      await tapVisible(tester, find.text('Forgot password?'));
 
       expect(repository.resetCalls, 1);
       expect(
@@ -142,14 +120,11 @@ void main() {
     });
   });
 
-  testWidgets('Sign up link opens the create-account screen', (tester) async {
-    createBloc();
-    await pumpWithBloc(tester, bloc, const LoginPage());
+  testWidgets('Create an account opens the sign-up screen', (tester) async {
+    await pumpStudyLinkApp(tester);
 
-    await tester.tap(find.text('No account? Sign up'));
-    await tester.pumpAndSettle();
+    await tapVisible(tester, find.text('Create an account'));
 
-    expect(find.byType(SignUpPage), findsOneWidget);
-    expect(find.text('Create account'), findsOneWidget);
+    expect(find.text('Create your account'), findsOneWidget);
   });
 }

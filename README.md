@@ -85,6 +85,32 @@ screen is drawn, so they are already applied when the app reopens.
 
 Open them from the gear icon on the home screen.
 
+## Booking flow screens (UI and navigation)
+
+These screens follow the StudyLink Figma prototype (warm off-white, deep green,
+mint, beige and gold visual system):
+
+- Sign In and Create Account (styled, using the Firebase `AuthBloc`)
+- Home
+- Find / Search Subjects
+- Tutor Results
+- Tutor Profile
+- Available Time Slots
+- Booking Confirmation
+- My Sessions
+- Session Details, with the Cancel Session bottom sheet
+- Rate Session
+- Settings
+
+Navigation uses `go_router` (`lib/app/router/app_router.dart`). The router sends
+signed-out users to Sign In and signed-in users to Home. The booking screens
+share their state through `StudyLinkCubit` (`lib/app/state/study_link_cubit.dart`).
+Reusable widgets are in `lib/shared/widgets/` and the design tokens in
+`lib/core/theme/`. More detail is in `docs/UI_IMPLEMENTATION.md`.
+
+The booking screens still use local sample tutors and sessions. They are not
+yet connected to the Firestore data layer.
+
 ## Setup
 
 1. Install the [Flutter SDK](https://docs.flutter.dev/get-started/install)
