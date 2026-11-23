@@ -30,11 +30,11 @@ class _LoginPageState extends State<LoginPage> {
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     context.read<AuthBloc>().add(
-          AuthSignInRequested(
-            email: _emailController.text,
-            password: _passwordController.text,
-          ),
-        );
+      AuthSignInRequested(
+        email: _emailController.text,
+        password: _passwordController.text,
+      ),
+    );
   }
 
   void _googleSignIn() {
@@ -49,9 +49,9 @@ class _LoginPageState extends State<LoginPage> {
       );
       return;
     }
-    context
-        .read<AuthBloc>()
-        .add(AuthPasswordResetRequested(_emailController.text));
+    context.read<AuthBloc>().add(
+      AuthPasswordResetRequested(_emailController.text),
+    );
   }
 
   @override

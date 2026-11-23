@@ -9,9 +9,7 @@ import 'auth_state.dart';
 
 /// Holds the sign-in state of the whole app.
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc({required AuthRepository authRepository})
-      : _authRepository = authRepository,
-        super(const AuthState()) {
+  AuthBloc({required this._authRepository}) : super(const AuthState()) {
     on<AuthUserChanged>(_onUserChanged);
     on<AuthSignUpRequested>(_onSignUp);
     on<AuthSignInRequested>(_onSignIn);
@@ -21,8 +19,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // Firebase remembers the user, so this also restores the session
     // when the app is reopened.
-    _userSubscription = _authRepository.authStateChanges
-        .listen((user) => add(AuthUserChanged(user)));
+    _userSubscription = _authRepository.authStateChanges.listen(
+      (user) => add(AuthUserChanged(user)),
+    );
   }
 
   final AuthRepository _authRepository;
