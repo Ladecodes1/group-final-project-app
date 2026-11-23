@@ -18,22 +18,23 @@ class TutorsCubit extends Cubit<TutorsState> {
 
     emit(const TutorsState(status: TutorsStatus.loading));
 
-    _subscription = _repository.watchTutorsBySubject(subjectId).listen(
-      (tutors) {
-        emit(TutorsState(
-          status: TutorsStatus.loaded,
-          tutors: tutors,
-        ));
-      },
-      onError: (Object error) {
-        emit(TutorsState(
-          status: TutorsStatus.error,
-          errorMessage: error is AppException
-              ? error.message
-              : 'Unable to load tutors. Please try again.',
-        ));
-      },
-    );
+    _subscription = _repository
+        .watchTutorsBySubject(subjectId)
+        .listen(
+          (tutors) {
+            emit(TutorsState(status: TutorsStatus.loaded, tutors: tutors));
+          },
+          onError: (Object error) {
+            emit(
+              TutorsState(
+                status: TutorsStatus.error,
+                errorMessage: error is AppException
+                    ? error.message
+                    : 'Unable to load tutors. Please try again.',
+              ),
+            );
+          },
+        );
   }
 
   @override

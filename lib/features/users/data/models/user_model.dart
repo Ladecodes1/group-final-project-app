@@ -45,4 +45,3 @@ class UserModel extends UserProfile {
     };
   }
 }
-

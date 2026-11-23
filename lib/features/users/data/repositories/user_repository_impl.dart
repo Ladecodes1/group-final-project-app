@@ -80,4 +80,3 @@ class UserRepositoryImpl implements UserRepository {
     return (name: cleanName, university: cleanUniversity);
   }
 }
-

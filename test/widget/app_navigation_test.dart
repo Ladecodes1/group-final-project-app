@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/fake_study_link_backend.dart';
 import '../helpers/pump_studylink_app.dart';
 
 void main() {
@@ -87,11 +88,16 @@ void main() {
     );
   });
 
-  testWidgets('a new booking appears as the next session on Home', (
-    tester,
-  ) async {
-    await pumpStudyLinkApp(tester, signedIn: true);
+  testWidgets('the next upcoming session is shown on Home', (tester) async {
+    await pumpStudyLinkApp(
+      tester,
+      signedIn: true,
+      backend: FakeStudyLinkBackend(
+        sessions: [pastSession.copyWith(isUpcoming: true)],
+      ),
+    );
 
-    expect(find.text('with Kevin Habimana'), findsOneWidget);
+    expect(find.text('with Grace Uwase'), findsOneWidget);
+    expect(find.text('STATISTICS'), findsOneWidget);
   });
 }

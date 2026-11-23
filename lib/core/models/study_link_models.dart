@@ -54,6 +54,7 @@ class StudySession {
     this.isRated = false,
     this.rating = 0,
     this.privateNote = '',
+    this.isCancelled = false,
   });
 
   final String id;
@@ -71,11 +72,15 @@ class StudySession {
   final int rating;
   final String privateNote;
 
+  /// A cancelled booking. It is shown under past sessions and can be removed.
+  final bool isCancelled;
+
   StudySession copyWith({
     bool? isUpcoming,
     bool? isRated,
     int? rating,
     String? privateNote,
+    bool? isCancelled,
   }) => StudySession(
     id: id,
     subject: subject,
@@ -91,6 +96,7 @@ class StudySession {
     isRated: isRated ?? this.isRated,
     rating: rating ?? this.rating,
     privateNote: privateNote ?? this.privateNote,
+    isCancelled: isCancelled ?? this.isCancelled,
   );
 }
 

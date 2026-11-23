@@ -29,4 +29,3 @@ abstract class UserRepository {
   /// DELETE: removes the profile document (not the sign-in account).
   Future<void> deleteUser(String uid);
 }
-

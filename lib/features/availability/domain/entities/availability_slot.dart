@@ -21,12 +21,12 @@ class AvailabilitySlot extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        tutorId,
-        subjectId,
-        date,
-        startTime,
-        endTime,
-        isBooked,
-      ];
+    id,
+    tutorId,
+    subjectId,
+    date,
+    startTime,
+    endTime,
+    isBooked,
+  ];
 }

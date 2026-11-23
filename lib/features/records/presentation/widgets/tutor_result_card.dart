@@ -92,15 +92,20 @@ class TutorResultCard extends StatelessWidget {
         Row(
           children: [
             const Text('Next open slot', style: AppTextStyles.caption),
-            const Spacer(),
-            Text(
-              tutor.nextSlot,
-              style: TextStyle(
-                color: tutor.fullyBooked
-                    ? AppColors.textSecondary
-                    : AppColors.green,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
+            const SizedBox(width: 12),
+            // Flexible so a long value shrinks instead of overflowing.
+            Expanded(
+              child: Text(
+                tutor.nextSlot,
+                textAlign: TextAlign.end,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: tutor.fullyBooked
+                      ? AppColors.textSecondary
+                      : AppColors.green,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ],

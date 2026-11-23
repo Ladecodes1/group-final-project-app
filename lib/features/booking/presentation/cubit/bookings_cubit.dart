@@ -28,18 +28,17 @@ class BookingsCubit extends Cubit<BookingsState> {
 
     _subscription = stream.listen(
       (bookings) {
-        emit(BookingsState(
-          status: BookingsStatus.loaded,
-          bookings: bookings,
-        ));
+        emit(BookingsState(status: BookingsStatus.loaded, bookings: bookings));
       },
       onError: (Object error) {
-        emit(BookingsState(
-          status: BookingsStatus.error,
-          errorMessage: error is AppException
-              ? error.message
-              : 'Unable to load bookings. Please try again.',
-        ));
+        emit(
+          BookingsState(
+            status: BookingsStatus.error,
+            errorMessage: error is AppException
+                ? error.message
+                : 'Unable to load bookings. Please try again.',
+          ),
+        );
       },
     );
   }
@@ -95,13 +94,15 @@ class BookingsCubit extends Cubit<BookingsState> {
   }
 
   void _emitActionError(Object error) {
-    emit(BookingsState(
-      status: BookingsStatus.error,
-      bookings: state.bookings,
-      errorMessage: error is AppException
-          ? error.message
-          : 'The booking action failed. Please try again.',
-    ));
+    emit(
+      BookingsState(
+        status: BookingsStatus.error,
+        bookings: state.bookings,
+        errorMessage: error is AppException
+            ? error.message
+            : 'The booking action failed. Please try again.',
+      ),
+    );
   }
 
   @override

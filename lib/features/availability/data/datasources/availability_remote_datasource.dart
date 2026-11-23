@@ -23,10 +23,10 @@ abstract class AvailabilityRemoteDataSource {
   });
 
   Future<void> deleteSlot(String slotId);
+  Future<AvailabilitySlotModel> getSlot(String slotId);
 }
 
-class AvailabilityRemoteDataSourceImpl
-    implements AvailabilityRemoteDataSource {
+class AvailabilityRemoteDataSourceImpl implements AvailabilityRemoteDataSource {
   AvailabilityRemoteDataSourceImpl(this._firestore);
 
   final FirebaseFirestore _firestore;
@@ -107,5 +107,14 @@ class AvailabilityRemoteDataSourceImpl
       }
       tx.delete(ref);
     });
+  }
+
+  @override
+  Future<AvailabilitySlotModel> getSlot(String slotId) async {
+    final doc = await _slots.doc(slotId).get();
+    if (!doc.exists) {
+      throw const AppException('That time slot no longer exists.');
+    }
+    return AvailabilitySlotModel.fromFirestore(doc);
   }
 }

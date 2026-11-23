@@ -1,3 +1,5 @@
+export 'helpers/fake_study_link_backend.dart';
+
 import 'dart:async';
 
 import 'package:studylink/features/auth/domain/auth_failure.dart';

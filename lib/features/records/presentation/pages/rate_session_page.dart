@@ -29,15 +29,22 @@ class RateSessionPage extends StatelessWidget {
     final state = context.watch<StudyLinkCubit>().state;
     final current =
         session ??
-        state.sessions.firstWhere(
-          (s) => !s.isUpcoming && !s.isRated,
-          orElse: () => state.sessions.first,
-        );
+        state.sessions.where((s) => !s.isUpcoming && !s.isRated).firstOrNull;
+    if (current == null) {
+      return Scaffold(
+        appBar: AppBar(backgroundColor: AppColors.background),
+        backgroundColor: AppColors.background,
+        body: const Center(
+          child: Text('No session to rate.', style: AppTextStyles.body),
+        ),
+      );
+    }
     final firstName = current.tutorName.split(' ').first;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Center(
+        child: Align(
+          alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 520),
             child: Column(

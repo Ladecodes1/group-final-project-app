@@ -57,6 +57,10 @@ class AvailabilityRepositoryImpl implements AvailabilityRepository {
   Future<void> deleteSlot(String slotId) =>
       guardFirebase(() => _remote.deleteSlot(slotId));
 
+  @override
+  Future<AvailabilitySlot> getSlot(String slotId) =>
+      guardFirebase(() => _remote.getSlot(slotId));
+
   void _validateTimes(DateTime startTime, DateTime endTime) {
     if (!endTime.isAfter(startTime)) {
       throw const AppException('The end time must be after the start time.');
