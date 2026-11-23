@@ -23,3 +23,14 @@ A peer-tutoring app with two roles:
 Bookings run in Firestore transactions so two students cannot take the same
 slot, cancelling frees the slot again, and each completed booking can be
 reviewed once.
+
+## Features
+
+| Feature                                                                       | Status                     |
+| ----------------------------------------------------------------------------- | -------------------------- |
+| Email sign up / log in, email verification, password reset                    | Done                       |
+| Google sign-in (Android)                                                      | Done                       |
+| Settings saved on the device (dark mode, session reminders, language)         | Done                       |
+| Firestore security rules                                                      | Done                       |
+| Users, tutor profiles, subjects, availability, bookings, reviews (data layer) | On `feature/database-crud` |
+| Tutor search, booking and session screens                                     | In progress                |
