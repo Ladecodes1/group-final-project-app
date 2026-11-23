@@ -122,3 +122,13 @@ Screenshots live in `docs/screenshots/`.
 | Login                                | Sign up                                  | Home                               | Settings (light)                                       | Settings (dark)                                      |
 | ------------------------------------ | ---------------------------------------- | ---------------------------------- | ------------------------------------------------------ | ---------------------------------------------------- |
 | ![Login](docs/screenshots/login.png) | ![Sign up](docs/screenshots/sign_up.png) | ![Home](docs/screenshots/home.png) | ![Settings light](docs/screenshots/settings_light.png) | ![Settings dark](docs/screenshots/settings_dark.png) |
+
+## Team
+
+| Member             | Area                                                                      |
+| ------------------ | ------------------------------------------------------------------------- |
+| Naomi Bamgbose     | Authentication, Firestore security rules                                  |
+| Dedine Mukabucyana | Database layer (users, tutors, subjects, availability, bookings, reviews) |
+| Martin             | UI screens and navigation                                                 |
+| Moses Mugisha      | Saved settings (SharedPreferences), README                                |
+| BYUUSAA            | Project setup                                                             |
