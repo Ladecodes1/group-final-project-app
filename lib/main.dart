@@ -9,6 +9,8 @@ import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_state.dart';
 import 'features/auth/presentation/pages/home_page.dart';
 import 'features/auth/presentation/pages/login_page.dart';
+import 'features/settings/data/settings_repository_impl.dart';
+import 'features/settings/presentation/cubit/settings_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,9 +29,16 @@ class StudyLinkApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider<AuthRepository>(
       create: (_) => AuthRepositoryImpl(),
-      child: BlocProvider(
-        create: (context) =>
-            AuthBloc(authRepository: context.read<AuthRepository>()),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+                AuthBloc(authRepository: context.read<AuthRepository>()),
+          ),
+          BlocProvider(
+            create: (_) => SettingsCubit(SettingsRepositoryImpl(prefs)),
+          ),
+        ],
         child: MaterialApp(
           title: 'StudyLink',
           theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
