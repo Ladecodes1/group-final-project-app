@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "647214709434",
+    "project_id": "studylink-395a2",
+    "storage_bucket": "studylink-395a2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647214709434:android:42287ff5b63d703f5e6083",
+        "android_client_info": {
+          "package_name": "com.example.studylink"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "647214709434-f5io3b0ciu8avrm4ii0qp989l56j2qac.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.studylink",
+            "certificate_hash": "5ef6d03ac43d1cb7d9f4737a5306eaa661cc09f8"
+          }
+        },
+        {
+          "client_id": "647214709434-4keggnmkhdvm1iebq963ih7jccmlbnpr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDn31xoJEaA_113p5XOtR6AinHwWFR-0ik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "647214709434-4keggnmkhdvm1iebq963ih7jccmlbnpr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
