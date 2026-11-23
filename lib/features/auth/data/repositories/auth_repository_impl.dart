@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -71,6 +72,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<AppUser> signInWithGoogle() async {
+    // google_sign_in's authenticate() is not supported on web; Firebase's popup is.
+    if (kIsWeb) return _signInWithGooglePopup();
     try {
       await _ensureGoogleInitialized();
       final account = await GoogleSignIn.instance.authenticate();
@@ -87,6 +90,19 @@ class AuthRepositoryImpl implements AuthRepository {
       }
       throw const AuthFailure('Google sign-in failed. Please try again.');
     } on FirebaseAuthException catch (error) {
+      throw AuthFailure(_messageFor(error));
+    }
+  }
+
+  Future<AppUser> _signInWithGooglePopup() async {
+    try {
+      final result = await _auth.signInWithPopup(GoogleAuthProvider());
+      return _toAppUser(result.user)!;
+    } on FirebaseAuthException catch (error) {
+      if (error.code == 'popup-closed-by-user' ||
+          error.code == 'cancelled-popup-request') {
+        throw const AuthFailure('Google sign-in was cancelled.');
+      }
       throw AuthFailure(_messageFor(error));
     }
   }
