@@ -41,6 +41,10 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
+      listenWhen: (previous, current) =>
+          current.status != previous.status ||
+          current.errorMessage != null ||
+          current.infoMessage != null,
       listener: (context, state) {
         // Signed up and signed in: go back to the root, which shows home.
         if (state.status == AuthStatus.authenticated) {
