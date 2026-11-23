@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // A user can read and write only their own document.
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Any signed-in user can read; only the owner can create, update or delete.
+    match /tutorProfiles/{tutorId} {
+      allow read: if signedIn();
+      allow create, update, delete: if isOwner(tutorId);
+    }
+
+    // Read-only from the app; subjects are added from the console.
+    match /subjects/{subjectId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // Any signed-in user can read. The tutor creates and deletes slots.
+    // A student may change only isBooked when booking.
+    match /availabilitySlots/{slotId} {
+      allow read: if signedIn();
+      allow create: if signedIn() &&
+        request.resource.data.tutorId == request.auth.uid;
+      allow delete: if signedIn() &&
+        resource.data.tutorId == request.auth.uid;
+      allow update: if signedIn() &&
+        (resource.data.tutorId == request.auth.uid ||
+         request.resource.data.diff(resource.data)
+           .affectedKeys().hasOnly(['isBooked']));
+    }
+
+    // Only the student or the tutor can read. A student creates a booking
+    // with their own studentId. Either party can update only the status.
+    match /bookings/{bookingId} {
+      allow read: if signedIn() &&
+        (resource.data.studentId == request.auth.uid ||
+         resource.data.tutorId == request.auth.uid);
+      allow create: if signedIn() &&
+        request.resource.data.studentId == request.auth.uid;
+      allow update: if signedIn() &&
+        (resource.data.studentId == request.auth.uid ||
+         resource.data.tutorId == request.auth.uid) &&
+        request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly(['status']);
+      allow delete: if false;
+    }
+
+    // Any signed-in user can read. Only the student who wrote it can
+    // create or edit a review.
+    match /reviews/{reviewId} {
+      allow read: if signedIn();
+      allow create: if signedIn() &&
+        request.resource.data.studentId == request.auth.uid;
+      allow update: if signedIn() &&
+        resource.data.studentId == request.auth.uid &&
+        request.resource.data.studentId == resource.data.studentId;
+      allow delete: if false;
+    }
+
+    // Everything else is blocked.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
