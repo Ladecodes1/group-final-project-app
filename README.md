@@ -81,3 +81,36 @@ screen is drawn, so they are already applied when the app reopens.
 | `language`             | String | `English` | English, French or Kinyarwanda (saved; translations not built yet) |
 
 Open them from the gear icon on the home screen.
+
+## Setup
+
+1. Install the [Flutter SDK](https://docs.flutter.dev/get-started/install)
+   and Android Studio (or an Android device with USB debugging).
+2. Clone and install packages:
+   ```bash
+   git clone https://github.com/Ladecodes1/group-final-project-app.git
+   cd group-final-project-app
+   flutter pub get
+   ```
+3. Firebase (already set up for the team project `studylink-395a2`):
+   - `android/app/google-services.json` is in the repo. To use your own
+     project instead, create one in the
+     [Firebase console](https://console.firebase.google.com), add an Android
+     app with package `com.example.studylink`, and replace that file.
+   - In **Authentication → Sign-in method**, enable **Email/Password** and
+     **Google**. For Google sign-in, add your debug SHA-1
+     (`cd android && ./gradlew signingReport`) to the Android app.
+   - Create a **Cloud Firestore** database and publish the rules in
+     `firestore.rules` (paste them in **Firestore → Rules**, or run
+     `firebase deploy --only firestore:rules` with the Firebase CLI).
+   - Add a few documents to the `subjects` collection
+     (fields: `name`, `courseCode`); the app only reads them.
+4. Run the app:
+   ```bash
+   flutter run
+   ```
+5. Run the checks:
+   ```bash
+   flutter analyze
+   flutter test
+   ```
