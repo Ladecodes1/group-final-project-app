@@ -31,11 +31,11 @@ class _SignUpPageState extends State<SignUpPage> {
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     context.read<AuthBloc>().add(
-          AuthSignUpRequested(
-            email: _emailController.text,
-            password: _passwordController.text,
-          ),
-        );
+      AuthSignUpRequested(
+        email: _emailController.text,
+        password: _passwordController.text,
+      ),
+    );
   }
 
   @override

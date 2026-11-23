@@ -9,7 +9,7 @@ import '../../domain/repositories/auth_repository.dart';
 /// Firebase Authentication version of [AuthRepository].
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({FirebaseAuth? firebaseAuth})
-      : _auth = firebaseAuth ?? FirebaseAuth.instance;
+    : _auth = firebaseAuth ?? FirebaseAuth.instance;
 
   /// The web client ID from google-services.json (client_type 3).
   static const String _webClientId =
