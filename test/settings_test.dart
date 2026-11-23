@@ -35,4 +35,15 @@ void main() {
     );
   });
 
+  test('reads values already on the device', () async {
+    SharedPreferences.setMockInitialValues({
+      'isDarkMode': true,
+      'language': 'Kinyarwanda',
+    });
+    final repo = SettingsRepositoryImpl(await SharedPreferences.getInstance());
+    expect(
+      repo.load(),
+      const AppSettings(isDarkMode: true, language: 'Kinyarwanda'),
+    );
+  });
 }
