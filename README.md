@@ -34,3 +34,11 @@ reviewed once.
 | Firestore security rules                                                      | Done                       |
 | Users, tutor profiles, subjects, availability, bookings, reviews (data layer) | On `feature/database-crud` |
 | Tutor search, booking and session screens                                     | In progress                |
+
+## Tech stack
+
+- Flutter (Dart SDK `^3.13.2`, tested with Flutter 3.47.2), Material 3
+- Firebase Auth and Cloud Firestore
+- State management: **BLoC / Cubit** (`flutter_bloc`) across the whole app
+- `shared_preferences` for saved settings
+- `equatable` for value equality
