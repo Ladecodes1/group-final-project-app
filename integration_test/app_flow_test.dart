@@ -17,7 +17,10 @@ void main() {
     await tester.pumpWidget(StudyLinkApp(prefs: prefs, authRepository: auth));
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'student@alustudent.com');
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'student@alustudent.com',
+    );
     await tester.enterText(find.byType(TextFormField).at(1), 'password123');
     await tester.tap(find.text('Sign in'));
     await tester.pumpAndSettle();

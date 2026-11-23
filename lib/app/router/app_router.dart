@@ -59,25 +59,20 @@ class StudyLinkRouter {
           path: '/boot',
           pageBuilder: (context, state) => _screen(
             state,
-            const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            ),
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
           ),
         ),
         GoRoute(
           path: '/sign-in',
-          pageBuilder: (context, state) =>
-              _screen(state, const LoginPage()),
+          pageBuilder: (context, state) => _screen(state, const LoginPage()),
         ),
         GoRoute(
           path: '/sign-up',
-          pageBuilder: (context, state) =>
-              _screen(state, const SignUpPage()),
+          pageBuilder: (context, state) => _screen(state, const SignUpPage()),
         ),
         GoRoute(
           path: '/home',
-          pageBuilder: (context, state) =>
-              _screen(state, const HomePage()),
+          pageBuilder: (context, state) => _screen(state, const HomePage()),
         ),
         GoRoute(
           path: '/search',
@@ -125,8 +120,7 @@ class StudyLinkRouter {
         ),
         GoRoute(
           path: '/settings',
-          pageBuilder: (context, state) =>
-              _screen(state, const SettingsPage()),
+          pageBuilder: (context, state) => _screen(state, const SettingsPage()),
         ),
       ],
     );

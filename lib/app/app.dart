@@ -15,33 +15,28 @@ import 'state/study_link_cubit.dart';
 
 /// Composition root preserving the team's Firebase Auth and Settings Cubit.
 class StudyLinkApp extends StatelessWidget {
-  const StudyLinkApp({
-    required this.prefs,
-    this.authRepository,
-    super.key,
-  });
+  const StudyLinkApp({required this.prefs, this.authRepository, super.key});
 
   final SharedPreferences prefs;
   final AuthRepository? authRepository;
 
   @override
   Widget build(BuildContext context) => RepositoryProvider<AuthRepository>(
-        create: (_) => authRepository ?? AuthRepositoryImpl(),
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) => AuthBloc(
-                authRepository: context.read<AuthRepository>(),
-              ),
-            ),
-            BlocProvider(
-              create: (_) => SettingsCubit(SettingsRepositoryImpl(prefs)),
-            ),
-            BlocProvider(create: (_) => StudyLinkCubit()),
-          ],
-          child: const _StudyLinkAppView(),
+    create: (_) => authRepository ?? AuthRepositoryImpl(),
+    child: MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              AuthBloc(authRepository: context.read<AuthRepository>()),
         ),
-      );
+        BlocProvider(
+          create: (_) => SettingsCubit(SettingsRepositoryImpl(prefs)),
+        ),
+        BlocProvider(create: (_) => StudyLinkCubit()),
+      ],
+      child: const _StudyLinkAppView(),
+    ),
+  );
 }
 
 class _StudyLinkAppView extends StatefulWidget {
@@ -68,21 +63,20 @@ class _StudyLinkAppViewState extends State<_StudyLinkAppView> {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<SettingsCubit, AppSettings>(
-        buildWhen: (previous, current) =>
-            previous.isDarkMode != current.isDarkMode,
-        builder: (context, settings) => MaterialApp.router(
-          title: 'StudyLink',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.light,
-          darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: AppColors.green,
-              brightness: Brightness.dark,
-            ),
-          ),
-          themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          routerConfig: _router.router,
+    buildWhen: (previous, current) => previous.isDarkMode != current.isDarkMode,
+    builder: (context, settings) => MaterialApp.router(
+      title: 'StudyLink',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light,
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.green,
+          brightness: Brightness.dark,
         ),
-      );
+      ),
+      themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      routerConfig: _router.router,
+    ),
+  );
 }

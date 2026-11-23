@@ -77,21 +77,21 @@ class StudySession {
     int? rating,
     String? privateNote,
   }) => StudySession(
-        id: id,
-        subject: subject,
-        tutorName: tutorName,
-        initials: initials,
-        day: day,
-        date: date,
-        time: time,
-        location: location,
-        mode: mode,
-        tutorId: tutorId,
-        isUpcoming: isUpcoming ?? this.isUpcoming,
-        isRated: isRated ?? this.isRated,
-        rating: rating ?? this.rating,
-        privateNote: privateNote ?? this.privateNote,
-      );
+    id: id,
+    subject: subject,
+    tutorName: tutorName,
+    initials: initials,
+    day: day,
+    date: date,
+    time: time,
+    location: location,
+    mode: mode,
+    tutorId: tutorId,
+    isUpcoming: isUpcoming ?? this.isUpcoming,
+    isRated: isRated ?? this.isRated,
+    rating: rating ?? this.rating,
+    privateNote: privateNote ?? this.privateNote,
+  );
 }
 
 // Prototype fixtures only. Replace with Firestore repository records when the

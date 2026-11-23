@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../core/theme/app_colors.dart';
 
 class AppTextField extends StatelessWidget {
@@ -26,18 +27,18 @@ class AppTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => TextFormField(
-        initialValue: initialValue,
-        onChanged: onChanged,
-        obscureText: obscureText,
-        maxLines: obscureText ? 1 : maxLines,
-        keyboardType: keyboardType,
-        textInputAction: textInputAction,
-        style: const TextStyle(fontSize: 14, color: AppColors.text),
-        decoration: InputDecoration(
-          hintText: hintText,
-          labelText: labelText,
-          prefixIcon: prefixIcon,
-          alignLabelWithHint: maxLines > 1,
-        ),
-      );
+    initialValue: initialValue,
+    onChanged: onChanged,
+    obscureText: obscureText,
+    maxLines: obscureText ? 1 : maxLines,
+    keyboardType: keyboardType,
+    textInputAction: textInputAction,
+    style: const TextStyle(fontSize: 14, color: AppColors.text),
+    decoration: InputDecoration(
+      hintText: hintText,
+      labelText: labelText,
+      prefixIcon: prefixIcon,
+      alignLabelWithHint: maxLines > 1,
+    ),
+  );
 }

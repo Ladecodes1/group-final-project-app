@@ -36,7 +36,9 @@ class MySessionsPage extends StatelessWidget {
                   AppCard(
                     child: Text(
                       'No upcoming sessions yet.',
-                      style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   )
                 else
@@ -45,7 +47,8 @@ class MySessionsPage extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 10),
                       child: _UpcomingCard(
                         session: session,
-                        onTap: () => context.push('/session-details', extra: session),
+                        onTap: () =>
+                            context.push('/session-details', extra: session),
                       ),
                     ),
                   ),
@@ -88,15 +91,89 @@ class _UpcomingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppCard(
-        onTap: onTap,
-        padding: const EdgeInsets.all(14),
-        child: Row(
+    onTap: onTap,
+    padding: const EdgeInsets.all(14),
+    child: Row(
+      children: [
+        Container(
+          width: 54,
+          height: 58,
+          decoration: BoxDecoration(
+            color: AppColors.green,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                session.day,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              Text(
+                session.date,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 13),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                session.subject,
+                style: const TextStyle(
+                  color: AppColors.text,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${session.tutorName} · ${session.time}',
+                style: AppTextStyles.caption,
+              ),
+              const SizedBox(height: 3),
+              Text(session.location, style: AppTextStyles.caption),
+            ],
+          ),
+        ),
+        const Icon(
+          Icons.chevron_right_rounded,
+          color: AppColors.green,
+          size: 22,
+        ),
+      ],
+    ),
+  );
+}
+
+class _PastCard extends StatelessWidget {
+  const _PastCard({required this.session, required this.onRate});
+  final StudySession session;
+  final VoidCallback onRate;
+
+  @override
+  Widget build(BuildContext context) => AppCard(
+    padding: const EdgeInsets.all(13),
+    child: Column(
+      children: [
+        Row(
           children: [
             Container(
               width: 54,
-              height: 58,
+              height: 54,
               decoration: BoxDecoration(
-                color: AppColors.green,
+                color: AppColors.surfaceSoft,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -104,11 +181,19 @@ class _UpcomingCard extends StatelessWidget {
                 children: [
                   Text(
                     session.day,
-                    style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.w800),
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                   Text(
                     session.date,
-                    style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800),
+                    style: const TextStyle(
+                      color: AppColors.text,
+                      fontSize: 19,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ],
               ),
@@ -127,90 +212,56 @@ class _UpcomingCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text('${session.tutorName} · ${session.time}', style: AppTextStyles.caption),
-                  const SizedBox(height: 3),
-                  Text(session.location, style: AppTextStyles.caption),
+                  Text(
+                    '${session.tutorName} · ${session.mode} · ${session.time}',
+                    style: AppTextStyles.caption,
+                  ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: AppColors.green, size: 22),
+            if (session.isRated)
+              Row(
+                children: [
+                  const Icon(
+                    Icons.star_rounded,
+                    color: AppColors.star,
+                    size: 16,
+                  ),
+                  Text(
+                    ' ${session.rating}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.text,
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
-      );
-}
-
-class _PastCard extends StatelessWidget {
-  const _PastCard({required this.session, required this.onRate});
-  final StudySession session;
-  final VoidCallback onRate;
-
-  @override
-  Widget build(BuildContext context) => AppCard(
-        padding: const EdgeInsets.all(13),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 54,
-                  height: 54,
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceSoft,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(session.day, style: const TextStyle(color: AppColors.textSecondary, fontSize: 10, fontWeight: FontWeight.w800)),
-                      Text(session.date, style: const TextStyle(color: AppColors.text, fontSize: 19, fontWeight: FontWeight.w800)),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 13),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        session.subject,
-                        style: const TextStyle(
-                          color: AppColors.text,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text('${session.tutorName} · ${session.mode} · ${session.time}', style: AppTextStyles.caption),
-                    ],
-                  ),
-                ),
-                if (session.isRated)
-                  Row(
-                    children: [
-                      const Icon(Icons.star_rounded, color: AppColors.star, size: 16),
-                      Text(' ${session.rating}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: AppColors.text)),
-                    ],
-                  ),
-              ],
-            ),
-            if (!session.isRated) ...[
-              const SizedBox(height: 11),
-              SizedBox(
-                width: double.infinity,
-                height: 40,
-                child: FilledButton.tonalIcon(
-                  onPressed: onRate,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.gold,
-                    foregroundColor: const Color(0xFF684D1B),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  icon: const Icon(Icons.star_border_rounded, size: 17),
-                  label: const Text('Rate this session', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
+        if (!session.isRated) ...[
+          const SizedBox(height: 11),
+          SizedBox(
+            width: double.infinity,
+            height: 40,
+            child: FilledButton.tonalIcon(
+              onPressed: onRate,
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.gold,
+                foregroundColor: const Color(0xFF684D1B),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
-            ],
-          ],
-        ),
-      );
+              icon: const Icon(Icons.star_border_rounded, size: 17),
+              label: const Text(
+                'Rate this session',
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+              ),
+            ),
+          ),
+        ],
+      ],
+    ),
+  );
 }

@@ -41,28 +41,51 @@ class AvailabilityPage extends StatelessWidget {
                           IconButton(
                             onPressed: () => context.pop(),
                             padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints.tightFor(width: 38, height: 42),
-                            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                            constraints: const BoxConstraints.tightFor(
+                              width: 38,
+                              height: 42,
+                            ),
+                            icon: const Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              size: 20,
+                            ),
                           ),
                           const SizedBox(width: 5),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Pick a time', style: AppTextStyles.pageTitle.copyWith(fontSize: 21)),
-                                Text('${tutor.name} · 45-minute session', style: AppTextStyles.caption),
+                                Text(
+                                  'Pick a time',
+                                  style: AppTextStyles.pageTitle.copyWith(
+                                    fontSize: 21,
+                                  ),
+                                ),
+                                Text(
+                                  '${tutor.name} · 45-minute session',
+                                  style: AppTextStyles.caption,
+                                ),
                               ],
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 19),
-                      const Text('September 2026', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.text)),
+                      const Text(
+                        'September 2026',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.text,
+                        ),
+                      ),
                       const SizedBox(height: 9),
                       LayoutBuilder(
                         builder: (context, constraints) {
                           final gap = 6.0;
-                          final width = (constraints.maxWidth - gap * (days.length - 1)) / days.length;
+                          final width =
+                              (constraints.maxWidth - gap * (days.length - 1)) /
+                              days.length;
                           return Wrap(
                             spacing: gap,
                             runSpacing: gap,
@@ -73,24 +96,33 @@ class AvailabilityPage extends StatelessWidget {
                                 width: width,
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(13),
-                                  onTap: () => context.read<StudyLinkCubit>().selectDay(value),
+                                  onTap: () => context
+                                      .read<StudyLinkCubit>()
+                                      .selectDay(value),
                                   child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 180),
                                     height: 65,
                                     decoration: BoxDecoration(
-                                      color: selected ? AppColors.green : Colors.white,
+                                      color: selected
+                                          ? AppColors.green
+                                          : Colors.white,
                                       border: Border.all(
-                                        color: selected ? AppColors.green : AppColors.border,
+                                        color: selected
+                                            ? AppColors.green
+                                            : AppColors.border,
                                       ),
                                       borderRadius: BorderRadius.circular(13),
                                     ),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Text(
                                           day.$1,
                                           style: TextStyle(
-                                            color: selected ? Colors.white70 : AppColors.textSecondary,
+                                            color: selected
+                                                ? Colors.white70
+                                                : AppColors.textSecondary,
                                             fontSize: 11,
                                             fontWeight: FontWeight.w700,
                                           ),
@@ -99,7 +131,9 @@ class AvailabilityPage extends StatelessWidget {
                                         Text(
                                           day.$2,
                                           style: TextStyle(
-                                            color: selected ? Colors.white : AppColors.text,
+                                            color: selected
+                                                ? Colors.white
+                                                : AppColors.text,
                                             fontSize: 18,
                                             fontWeight: FontWeight.w800,
                                           ),
@@ -114,7 +148,14 @@ class AvailabilityPage extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 18),
-                      const Text('Open slots', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.text)),
+                      const Text(
+                        'Open slots',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.text,
+                        ),
+                      ),
                       const SizedBox(height: 9),
                       LayoutBuilder(
                         builder: (context, constraints) {
@@ -128,18 +169,29 @@ class AvailabilityPage extends StatelessWidget {
                               return SizedBox(
                                 width: width,
                                 child: OutlinedButton(
-                                  onPressed: () => context.read<StudyLinkCubit>().selectTime(time),
+                                  onPressed: () => context
+                                      .read<StudyLinkCubit>()
+                                      .selectTime(time),
                                   style: OutlinedButton.styleFrom(
                                     minimumSize: const Size(0, 48),
-                                    backgroundColor: selected ? AppColors.green : Colors.white,
-                                    foregroundColor: selected ? Colors.white : AppColors.text,
+                                    backgroundColor: selected
+                                        ? AppColors.green
+                                        : Colors.white,
+                                    foregroundColor: selected
+                                        ? Colors.white
+                                        : AppColors.text,
                                     side: BorderSide(
-                                      color: selected ? AppColors.green : AppColors.border,
+                                      color: selected
+                                          ? AppColors.green
+                                          : AppColors.border,
                                     ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
+                                    textStyle: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w800,
+                                    ),
                                   ),
                                   child: Text(time),
                                 ),
@@ -149,7 +201,14 @@ class AvailabilityPage extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 19),
-                      const Text('Where', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.text)),
+                      const Text(
+                        'Where',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.text,
+                        ),
+                      ),
                       const SizedBox(height: 9),
                       Row(
                         children: [
@@ -157,7 +216,9 @@ class AvailabilityPage extends StatelessWidget {
                             child: _ModeButton(
                               label: 'On campus',
                               selected: state.meetingMode == 'On campus',
-                              onTap: () => context.read<StudyLinkCubit>().selectMeetingMode('On campus'),
+                              onTap: () => context
+                                  .read<StudyLinkCubit>()
+                                  .selectMeetingMode('On campus'),
                             ),
                           ),
                           const SizedBox(width: 9),
@@ -165,7 +226,9 @@ class AvailabilityPage extends StatelessWidget {
                             child: _ModeButton(
                               label: 'Online',
                               selected: state.meetingMode == 'Online',
-                              onTap: () => context.read<StudyLinkCubit>().selectMeetingMode('Online'),
+                              onTap: () => context
+                                  .read<StudyLinkCubit>()
+                                  .selectMeetingMode('Online'),
                             ),
                           ),
                         ],
@@ -174,15 +237,30 @@ class AvailabilityPage extends StatelessWidget {
                       const Text.rich(
                         TextSpan(
                           children: [
-                            TextSpan(text: 'What are you stuck on? ', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.text)),
-                            TextSpan(text: '(only your booked tutor sees this)', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                            TextSpan(
+                              text: 'What are you stuck on? ',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.text,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '(only your booked tutor sees this)',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
                         initialValue: state.privateNote,
-                        onChanged: context.read<StudyLinkCubit>().setPrivateNote,
+                        onChanged: context
+                            .read<StudyLinkCubit>()
+                            .setPrivateNote,
                         maxLines: 3,
                         decoration: const InputDecoration(
                           hintText: 'e.g. I do not understand recursion in merge sort',
@@ -211,14 +289,18 @@ class AvailabilityPage extends StatelessWidget {
                           label: 'Confirm booking',
                           onPressed: () async {
                             try {
-                              final ok = await context.read<StudyLinkCubit>().confirmBooking();
+                              final ok = await context
+                                  .read<StudyLinkCubit>()
+                                  .confirmBooking();
                               if (!context.mounted) return;
                               if (ok) {
                                 context.push('/booking-confirmed');
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('That time is no longer available. Please choose another time.'),
+                                    content: Text(
+                                      'That time is no longer available. Please choose another time.',
+                                    ),
                                   ),
                                 );
                               }
@@ -226,7 +308,9 @@ class AvailabilityPage extends StatelessWidget {
                               if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Booking failed. Your selections have been kept. Please try again.'),
+                                  content: Text(
+                                    'Booking failed. Your selections have been kept. Please try again.',
+                                  ),
                                 ),
                               );
                             }
@@ -246,24 +330,28 @@ class AvailabilityPage extends StatelessWidget {
 }
 
 class _ModeButton extends StatelessWidget {
-  const _ModeButton({required this.label, required this.selected, required this.onTap});
+  const _ModeButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
   final String label;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: 48,
-        child: OutlinedButton(
-          onPressed: onTap,
-          style: OutlinedButton.styleFrom(
-            backgroundColor: selected ? AppColors.green : Colors.white,
-            foregroundColor: selected ? Colors.white : AppColors.text,
-            side: BorderSide(color: selected ? AppColors.green : AppColors.border),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
-          ),
-          child: Text(label),
-        ),
-      );
+    height: 48,
+    child: OutlinedButton(
+      onPressed: onTap,
+      style: OutlinedButton.styleFrom(
+        backgroundColor: selected ? AppColors.green : Colors.white,
+        foregroundColor: selected ? Colors.white : AppColors.text,
+        side: BorderSide(color: selected ? AppColors.green : AppColors.border),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
+      ),
+      child: Text(label),
+    ),
+  );
 }

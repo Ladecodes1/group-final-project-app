@@ -58,13 +58,13 @@ class StudyLinkState {
         rating: 5,
       ),
     ],
-    rating = 4,
-    unstuckAnswer = 'Yes',
-    feedbackTags = const {'Clear explanations'},
-    extraFeedback = '',
-    cancelReason = 'The time no longer works',
-    lastBookingFailed = false,
-    selectedSlotAvailable = true,
+    this.rating = 4,
+    this.unstuckAnswer = 'Yes',
+    this.feedbackTags = const {'Clear explanations'},
+    this.extraFeedback = '',
+    this.cancelReason = 'The time no longer works',
+    this.lastBookingFailed = false,
+    this.selectedSlotAvailable = true,
   });
 
   final String searchQuery;
@@ -102,47 +102,41 @@ class StudyLinkState {
     bool? lastBookingFailed,
     bool? selectedSlotAvailable,
   }) => StudyLinkState(
-        searchQuery: searchQuery ?? this.searchQuery,
-        selectedSubject: selectedSubject ?? this.selectedSubject,
-        selectedTutor: selectedTutor ?? this.selectedTutor,
-        selectedDay: selectedDay ?? this.selectedDay,
-        selectedTime: selectedTime ?? this.selectedTime,
-        meetingMode: meetingMode ?? this.meetingMode,
-        privateNote: privateNote ?? this.privateNote,
-        tutorFilter: tutorFilter ?? this.tutorFilter,
-        sessions: sessions ?? this.sessions,
-        rating: rating ?? this.rating,
-        unstuckAnswer: unstuckAnswer ?? this.unstuckAnswer,
-        feedbackTags: feedbackTags ?? this.feedbackTags,
-        extraFeedback: extraFeedback ?? this.extraFeedback,
-        cancelReason: cancelReason ?? this.cancelReason,
-        lastBookingFailed: lastBookingFailed ?? this.lastBookingFailed,
-        selectedSlotAvailable:
-            selectedSlotAvailable ?? this.selectedSlotAvailable,
-      );
+    searchQuery: searchQuery ?? this.searchQuery,
+    selectedSubject: selectedSubject ?? this.selectedSubject,
+    selectedTutor: selectedTutor ?? this.selectedTutor,
+    selectedDay: selectedDay ?? this.selectedDay,
+    selectedTime: selectedTime ?? this.selectedTime,
+    meetingMode: meetingMode ?? this.meetingMode,
+    privateNote: privateNote ?? this.privateNote,
+    tutorFilter: tutorFilter ?? this.tutorFilter,
+    sessions: sessions ?? this.sessions,
+    rating: rating ?? this.rating,
+    unstuckAnswer: unstuckAnswer ?? this.unstuckAnswer,
+    feedbackTags: feedbackTags ?? this.feedbackTags,
+    extraFeedback: extraFeedback ?? this.extraFeedback,
+    cancelReason: cancelReason ?? this.cancelReason,
+    lastBookingFailed: lastBookingFailed ?? this.lastBookingFailed,
+    selectedSlotAvailable: selectedSlotAvailable ?? this.selectedSlotAvailable,
+  );
 }
 
 class StudyLinkCubit extends Cubit<StudyLinkState> {
   StudyLinkCubit() : super(const StudyLinkState());
 
-  void setSearchQuery(String value) =>
-      emit(state.copyWith(searchQuery: value));
+  void setSearchQuery(String value) => emit(state.copyWith(searchQuery: value));
 
-  void selectSubject(String value) => emit(
-        state.copyWith(selectedSubject: value, searchQuery: value),
-      );
+  void selectSubject(String value) =>
+      emit(state.copyWith(selectedSubject: value, searchQuery: value));
 
-  void selectTutor(Tutor tutor) =>
-      emit(state.copyWith(selectedTutor: tutor));
+  void selectTutor(Tutor tutor) => emit(state.copyWith(selectedTutor: tutor));
 
   void selectDay(String value) => emit(state.copyWith(selectedDay: value));
   void selectTime(String value) => emit(state.copyWith(selectedTime: value));
   void selectMeetingMode(String value) =>
       emit(state.copyWith(meetingMode: value));
-  void setPrivateNote(String value) =>
-      emit(state.copyWith(privateNote: value));
-  void setTutorFilter(String value) =>
-      emit(state.copyWith(tutorFilter: value));
+  void setPrivateNote(String value) => emit(state.copyWith(privateNote: value));
+  void setTutorFilter(String value) => emit(state.copyWith(tutorFilter: value));
   void setRating(int value) =>
       emit(state.copyWith(rating: value.clamp(1, 5).toInt()));
 
@@ -156,6 +150,7 @@ class StudyLinkCubit extends Cubit<StudyLinkState> {
       ),
     );
   }
+
   void setUnstuckAnswer(String value) =>
       emit(state.copyWith(unstuckAnswer: value));
   void setExtraFeedback(String value) =>
@@ -203,9 +198,11 @@ class StudyLinkCubit extends Cubit<StudyLinkState> {
   /// Updates only the session the learner selected, never every upcoming item.
   void cancelSession(String sessionId) {
     final updated = state.sessions
-        .map((session) => session.id == sessionId
-            ? session.copyWith(isUpcoming: false)
-            : session)
+        .map(
+          (session) => session.id == sessionId
+              ? session.copyWith(isUpcoming: false)
+              : session,
+        )
         .toList();
     emit(state.copyWith(sessions: updated));
   }
@@ -214,9 +211,11 @@ class StudyLinkCubit extends Cubit<StudyLinkState> {
   /// rated by accident (the issue raised in PR #4).
   void submitRating(String sessionId) {
     final updated = state.sessions
-        .map((session) => session.id == sessionId
-            ? session.copyWith(isRated: true, rating: state.rating)
-            : session)
+        .map(
+          (session) => session.id == sessionId
+              ? session.copyWith(isRated: true, rating: state.rating)
+              : session,
+        )
         .toList();
     emit(state.copyWith(sessions: updated));
   }
