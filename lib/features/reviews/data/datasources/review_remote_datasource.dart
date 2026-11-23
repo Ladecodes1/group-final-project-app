@@ -5,7 +5,6 @@ import '../../../../core/error/app_exception.dart';
 import '../../../booking/domain/entities/booking.dart';
 import '../models/review_model.dart';
 
-/// Talks to Cloud Firestore. Nothing outside the data layer uses this.
 abstract class ReviewRemoteDataSource {
   Future<void> createReview({
     required String bookingId,
@@ -44,8 +43,6 @@ class ReviewRemoteDataSourceImpl implements ReviewRemoteDataSource {
     required String comment,
   }) async {
     final bookingRef = _bookings.doc(bookingId);
-    // The booking id is also the review id, so a booking can only be
-    // rated once.
     final reviewRef = _reviews.doc(bookingId);
 
     await _firestore.runTransaction((tx) async {
@@ -70,11 +67,18 @@ class ReviewRemoteDataSourceImpl implements ReviewRemoteDataSource {
         throw const AppException('You already rated this session.');
       }
 
+      final tutorId = data['tutorId'] as String?;
+
+      if (tutorId == null || tutorId.isEmpty) {
+        throw const AppException('The booking has no tutor assigned.');
+      }
+
       tx.set(
         reviewRef,
         ReviewModel.newDocument(
           bookingId: bookingId,
           studentId: studentId,
+          tutorId: tutorId,
           rating: rating,
           comment: comment,
         ),

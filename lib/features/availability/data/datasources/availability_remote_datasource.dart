@@ -4,25 +4,29 @@ import '../../../../core/constants/firestore_collections.dart';
 import '../../../../core/error/app_exception.dart';
 import '../models/availability_slot_model.dart';
 
-/// Talks to Cloud Firestore. Nothing outside the data layer uses this.
 abstract class AvailabilityRemoteDataSource {
   Future<String> createSlot({
     required String tutorId,
+    required String subjectId,
+    required DateTime date,
     required DateTime startTime,
     required DateTime endTime,
   });
+
   Stream<List<AvailabilitySlotModel>> watchOpenSlots(String tutorId);
   Stream<List<AvailabilitySlotModel>> watchTutorSlots(String tutorId);
+
   Future<void> updateSlotTimes({
     required String slotId,
     required DateTime startTime,
     required DateTime endTime,
   });
+
   Future<void> deleteSlot(String slotId);
 }
 
-class AvailabilityRemoteDataSourceImpl implements AvailabilityRemoteDataSource {
-  /// The Firestore instance is passed in so tests can use a fake one.
+class AvailabilityRemoteDataSourceImpl
+    implements AvailabilityRemoteDataSource {
   AvailabilityRemoteDataSourceImpl(this._firestore);
 
   final FirebaseFirestore _firestore;
@@ -33,12 +37,16 @@ class AvailabilityRemoteDataSourceImpl implements AvailabilityRemoteDataSource {
   @override
   Future<String> createSlot({
     required String tutorId,
+    required String subjectId,
+    required DateTime date,
     required DateTime startTime,
     required DateTime endTime,
   }) async {
     final ref = await _slots.add(
       AvailabilitySlotModel.newDocument(
         tutorId: tutorId,
+        subjectId: subjectId,
+        date: date,
         startTime: startTime,
         endTime: endTime,
       ),
@@ -46,8 +54,6 @@ class AvailabilityRemoteDataSourceImpl implements AvailabilityRemoteDataSource {
     return ref.id;
   }
 
-  /// Needs a composite index:
-  /// availabilitySlots -> tutorId (asc), isBooked (asc), startTime (asc).
   @override
   Stream<List<AvailabilitySlotModel>> watchOpenSlots(String tutorId) {
     return _slots
@@ -59,8 +65,6 @@ class AvailabilityRemoteDataSourceImpl implements AvailabilityRemoteDataSource {
         .map((s) => s.docs.map(AvailabilitySlotModel.fromFirestore).toList());
   }
 
-  /// Needs a composite index:
-  /// availabilitySlots -> tutorId (asc), startTime (asc).
   @override
   Stream<List<AvailabilitySlotModel>> watchTutorSlots(String tutorId) {
     return _slots
@@ -77,7 +81,6 @@ class AvailabilityRemoteDataSourceImpl implements AvailabilityRemoteDataSource {
     required DateTime endTime,
   }) async {
     final ref = _slots.doc(slotId);
-    // A transaction stops a slot being edited at the moment it gets booked.
     await _firestore.runTransaction((tx) async {
       final slot = await tx.get(ref);
       if (slot.data()?['isBooked'] == true) {
