@@ -114,3 +114,11 @@ Open them from the gear icon on the home screen.
    flutter analyze
    flutter test
    ```
+
+## Screenshots
+
+Screenshots live in `docs/screenshots/`.
+
+| Login                                | Sign up                                  | Home                               | Settings (light)                                       | Settings (dark)                                      |
+| ------------------------------------ | ---------------------------------------- | ---------------------------------- | ------------------------------------------------------ | ---------------------------------------------------- |
+| ![Login](docs/screenshots/login.png) | ![Sign up](docs/screenshots/sign_up.png) | ![Home](docs/screenshots/home.png) | ![Settings light](docs/screenshots/settings_light.png) | ![Settings dark](docs/screenshots/settings_dark.png) |
