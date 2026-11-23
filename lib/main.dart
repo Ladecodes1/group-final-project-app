@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
@@ -12,11 +13,15 @@ import 'features/auth/presentation/pages/login_page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const StudyLinkApp());
+  // Loaded before runApp so saved settings apply on the very first frame.
+  final prefs = await SharedPreferences.getInstance();
+  runApp(StudyLinkApp(prefs: prefs));
 }
 
 class StudyLinkApp extends StatelessWidget {
-  const StudyLinkApp({super.key});
+  const StudyLinkApp({super.key, required this.prefs});
+
+  final SharedPreferences prefs;
 
   @override
   Widget build(BuildContext context) {
