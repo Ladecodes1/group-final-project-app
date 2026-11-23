@@ -29,7 +29,8 @@ reviewed once.
 | Feature                                                                       | Status                     |
 | ----------------------------------------------------------------------------- | -------------------------- |
 | Email sign up / log in, email verification, password reset                    | Done                       |
-| Google sign-in (Android)                                                      | Done                       |
+| Google sign-in (Android and web)                                              | Done                       |
+| Runs in the browser (Chrome) and on the Android emulator                      | Done                       |
 | Settings saved on the device (dark mode, session reminders, language)         | Done                       |
 | Firestore security rules                                                      | Done                       |
 | Users, tutor profiles, subjects, availability, bookings, reviews (data layer) | On `feature/database-crud` |
@@ -51,6 +52,7 @@ storage directly; screens only show state and call BLoC/Cubit methods.
 ```
 lib/
   main.dart                 app start: Firebase, saved settings, providers
+  firebase_options.dart     Firebase settings per platform (generated)
   features/
     auth/
       domain/               AppUser, AuthRepository contract, validators
@@ -60,6 +62,7 @@ lib/
       domain/               AppSettings, SettingsRepository contract
       data/                 SharedPreferences implementation
       presentation/         SettingsCubit, settings page
+web/                        browser entry (index.html, icons, manifest)
 test/                       unit tests
 firestore.rules             Firestore security rules
 ```
@@ -93,10 +96,12 @@ Open them from the gear icon on the home screen.
    flutter pub get
    ```
 3. Firebase (already set up for the team project `studylink-395a2`):
-   - `android/app/google-services.json` is in the repo. To use your own
-     project instead, create one in the
-     [Firebase console](https://console.firebase.google.com), add an Android
-     app with package `com.example.studylink`, and replace that file.
+   - `lib/firebase_options.dart` (web + Android) and
+     `android/app/google-services.json` are in the repo, so nothing to do for
+     the team project. To use your own project instead, install the
+     [Firebase CLI](https://firebase.google.com/docs/cli) and run
+     `firebase login`, `dart pub global activate flutterfire_cli`, then
+     `flutterfire configure --platforms=android,web`.
    - In **Authentication → Sign-in method**, enable **Email/Password** and
      **Google**. For Google sign-in, add your debug SHA-1
      (`cd android && ./gradlew signingReport`) to the Android app.
@@ -105,15 +110,55 @@ Open them from the gear icon on the home screen.
      `firebase deploy --only firestore:rules` with the Firebase CLI).
    - Add a few documents to the `subjects` collection
      (fields: `name`, `courseCode`); the app only reads them.
-4. Run the app:
+4. Run the app. The browser is the default; the Android emulator is the
+   second option.
+
+   **Option 1: browser (Chrome)**
+
    ```bash
-   flutter run
+   make web
    ```
+
+   The app opens at http://localhost:8080. Google sign-in uses a popup, so
+   allow popups for `localhost` if Chrome blocks it.
+
+   **Option 2: Android emulator**
+
+   ```bash
+   make emulator                          # starts flutter_api36 if none is running
+   make emulator EMULATOR=<id>            # use another emulator (see make emulators)
+   ```
+
+   No emulator yet? Create one in Android Studio → Device Manager.
+
+   In VS Code, pick **StudyLink (Chrome)** or **StudyLink (Android emulator)**
+   from the Run and Debug panel (`.vscode/launch.json`).
+
 5. Run the checks:
    ```bash
-   flutter analyze
-   flutter test
+   make check
    ```
+
+### Commands
+
+All commands are in the `Makefile`. Run `make help` to list them.
+
+| Command          | What it does                                         | Same as                                                                |
+| ---------------- | ---------------------------------------------------- | ---------------------------------------------------------------------- |
+| `make setup`     | Install packages (once after cloning)                | `flutter pub get`                                                      |
+| `make web`       | Run in Chrome at http://localhost:8080               | `flutter run -d chrome --web-port 8080`                                |
+| `make emulator`  | Start the Android emulator if needed, then run on it | `flutter emulators --launch flutter_api36` + `flutter run -d emulator` |
+| `make emulators` | List Android emulators                               | `flutter emulators`                                                    |
+| `make devices`   | List connected devices                               | `flutter devices`                                                      |
+| `make test`      | Run the tests                                        | `flutter test`                                                         |
+| `make analyze`   | Check the code                                       | `flutter analyze --no-fatal-infos`                                     |
+| `make check`     | Analyze, then test                                   |                                                                        |
+| `make build-web` | Build the web app into `build/web`                   | `flutter build web`                                                    |
+| `make build-apk` | Build a debug APK                                    | `flutter build apk --debug`                                            |
+| `make clean`     | Delete build files                                   | `flutter clean`                                                        |
+
+`make` comes with Linux and macOS. On Windows, use the command in the
+"Same as" column, or run from Git Bash/WSL.
 
 ## Screenshots
 
