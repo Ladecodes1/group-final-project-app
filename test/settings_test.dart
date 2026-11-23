@@ -12,4 +12,27 @@ void main() {
     expect(repo.load(), const AppSettings());
   });
 
+  test('changes are restored after a relaunch', () async {
+    final cubit = SettingsCubit(
+      SettingsRepositoryImpl(await SharedPreferences.getInstance()),
+    );
+    await cubit.setDarkMode(true);
+    await cubit.setNotifications(false);
+    await cubit.setLanguage('French');
+    await cubit.close();
+
+    // A new cubit on the same storage = the app opened again.
+    final relaunched = SettingsCubit(
+      SettingsRepositoryImpl(await SharedPreferences.getInstance()),
+    );
+    expect(
+      relaunched.state,
+      const AppSettings(
+        isDarkMode: true,
+        notificationsEnabled: false,
+        language: 'French',
+      ),
+    );
+  });
+
 }
