@@ -22,7 +22,8 @@ class SessionDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<StudyLinkCubit>().state;
     final current = session ?? _defaultSession(state);
-    final tutor = sampleTutors.firstWhere(
+    if (current == null) return const _NoSession();
+    final tutor = state.tutors.firstWhere(
       (t) => t.id == current.tutorId,
       orElse: () => state.selectedTutor,
     );
@@ -30,7 +31,8 @@ class SessionDetailsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Center(
+        child: Align(
+          alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
             child: Column(
@@ -232,8 +234,9 @@ class SessionDetailsPage extends StatelessWidget {
 
   String _endTime(String start) => '${start.split(':').first}:45';
 
-  static StudySession _defaultSession(StudyLinkState state) => state.sessions
-      .firstWhere((s) => s.isUpcoming, orElse: () => state.sessions.first);
+  static StudySession? _defaultSession(StudyLinkState state) =>
+      state.sessions.where((s) => s.isUpcoming).firstOrNull ??
+      state.sessions.firstOrNull;
 
   void _showCancelSheet(BuildContext context, StudySession current) {
     showModalBottomSheet<void>(
@@ -251,6 +254,30 @@ class SessionDetailsPage extends StatelessWidget {
         },
         onPickAnotherTime: () {
           Navigator.of(sheetContext).pop();
+          // Rebooking: cancel this booking, then show the same tutor's
+          // open times.
+          final cubit = context.read<StudyLinkCubit>();
+          cubit.cancelSession(current.id);
+          cubit.selectSubject(current.subject);
+          cubit.selectTutor(
+            cubit.state.tutors
+                    .where((t) => t.id == current.tutorId)
+                    .firstOrNull ??
+                Tutor(
+                  id: current.tutorId,
+                  name: current.tutorName,
+                  initials: current.initials,
+                  year: '',
+                  programme: 'Peer tutor',
+                  rating: 0,
+                  sessions: 0,
+                  nextSlot: '',
+                  subjects: [current.subject],
+                  about: '',
+                  avatarColor: AppColors.beigeAvatar,
+                  isNew: true,
+                ),
+          );
           context.push('/availability');
         },
       ),
@@ -435,4 +462,18 @@ class _CancelSessionSheet extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Shown if the screen is opened before any session exists.
+class _NoSession extends StatelessWidget {
+  const _NoSession();
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(backgroundColor: AppColors.background),
+    backgroundColor: AppColors.background,
+    body: const Center(
+      child: Text('No session selected.', style: AppTextStyles.body),
+    ),
+  );
 }

@@ -14,7 +14,11 @@ void main() {
     final prefs = await SharedPreferences.getInstance();
     final auth = FakeAuthRepository();
 
-    await tester.pumpWidget(StudyLinkApp(prefs: prefs, authRepository: auth));
+    final data = FakeStudyLinkBackend();
+
+    await tester.pumpWidget(
+      StudyLinkApp(prefs: prefs, authRepository: auth, backend: data),
+    );
     await tester.pumpAndSettle();
 
     await tester.enterText(
@@ -32,5 +36,6 @@ void main() {
 
     await tester.pumpWidget(const SizedBox.shrink());
     await auth.close();
+    await data.dispose();
   });
 }

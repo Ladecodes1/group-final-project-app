@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:studylink/app/app.dart';
 
 import 'fake_auth_repository.dart';
+import 'fake_study_link_backend.dart';
 
 /// Runs the whole StudyLink app (router, AuthBloc, settings and booking state)
 /// with a fake login, on a phone-sized screen.
@@ -13,6 +14,7 @@ Future<FakeAuthRepository> pumpStudyLinkApp(
   WidgetTester tester, {
   bool signedIn = false,
   Size size = const Size(430, 932),
+  FakeStudyLinkBackend? backend,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -24,8 +26,12 @@ Future<FakeAuthRepository> pumpStudyLinkApp(
   final repository = FakeAuthRepository();
   addTearDown(repository.dispose);
 
+  // The booking data comes from an in-memory backend, never real Firestore.
+  final data = backend ?? FakeStudyLinkBackend();
+  addTearDown(data.dispose);
+
   await tester.pumpWidget(
-    StudyLinkApp(prefs: prefs, authRepository: repository),
+    StudyLinkApp(prefs: prefs, authRepository: repository, backend: data),
   );
   // Firebase would report the saved login state when the app starts.
   repository.emitUser(signedIn ? testUser : null);

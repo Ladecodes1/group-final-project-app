@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/state/firestore_study_link_backend.dart';
 import '../../../../app/state/study_link_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -10,15 +11,6 @@ import '../../../../shared/widgets/app_button.dart';
 class AvailabilityPage extends StatelessWidget {
   const AvailabilityPage({super.key});
 
-  static const days = [
-    ('Wed', '23'),
-    ('Thu', '24'),
-    ('Fri', '25'),
-    ('Sat', '26'),
-    ('Mon', '28'),
-  ];
-  static const times = ['10:00', '14:00', '16:00', '19:00'];
-
   @override
   Widget build(BuildContext context) {
     final state = context.watch<StudyLinkCubit>().state;
@@ -26,7 +18,8 @@ class AvailabilityPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Center(
+        child: Align(
+          alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
             child: Column(
@@ -71,8 +64,10 @@ class AvailabilityPage extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 19),
-                      const Text(
-                        'September 2026',
+                      Text(
+                        state.slots.isEmpty
+                            ? 'Open times'
+                            : monthLabel(state.slots.first.startTime),
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
@@ -80,73 +75,93 @@ class AvailabilityPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 9),
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final gap = 6.0;
-                          final width =
-                              (constraints.maxWidth - gap * (days.length - 1)) /
-                              days.length;
-                          return Wrap(
-                            spacing: gap,
-                            runSpacing: gap,
-                            children: days.map((day) {
-                              final value = '${day.$1} ${day.$2}';
-                              final selected = state.selectedDay == value;
-                              return SizedBox(
-                                width: width,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(13),
-                                  onTap: () => context
-                                      .read<StudyLinkCubit>()
-                                      .selectDay(value),
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 180),
-                                    height: 65,
-                                    decoration: BoxDecoration(
-                                      color: selected
-                                          ? AppColors.green
-                                          : Colors.white,
-                                      border: Border.all(
+                      if (state.slotsLoading)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      else if (state.days.isEmpty)
+                        Text(
+                          '${tutor.name} has no open times right now. Please check back later or choose another tutor.',
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        )
+                      else
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final gap = 6.0;
+                            final days = state.days;
+                            final width =
+                                (constraints.maxWidth -
+                                    gap * (days.length - 1)) /
+                                days.length;
+                            return Wrap(
+                              spacing: gap,
+                              runSpacing: gap,
+                              children: days.map((value) {
+                                final day = (
+                                  value.split(' ').first,
+                                  value.split(' ').last,
+                                );
+                                final selected = state.selectedDay == value;
+                                return SizedBox(
+                                  width: width,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(13),
+                                    onTap: () => context
+                                        .read<StudyLinkCubit>()
+                                        .selectDay(value),
+                                    child: AnimatedContainer(
+                                      duration: const Duration(
+                                        milliseconds: 180,
+                                      ),
+                                      height: 65,
+                                      decoration: BoxDecoration(
                                         color: selected
                                             ? AppColors.green
-                                            : AppColors.border,
+                                            : Colors.white,
+                                        border: Border.all(
+                                          color: selected
+                                              ? AppColors.green
+                                              : AppColors.border,
+                                        ),
+                                        borderRadius: BorderRadius.circular(13),
                                       ),
-                                      borderRadius: BorderRadius.circular(13),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          day.$1,
-                                          style: TextStyle(
-                                            color: selected
-                                                ? Colors.white70
-                                                : AppColors.textSecondary,
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w700,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            day.$1,
+                                            style: TextStyle(
+                                              color: selected
+                                                  ? Colors.white70
+                                                  : AppColors.textSecondary,
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w700,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 3),
-                                        Text(
-                                          day.$2,
-                                          style: TextStyle(
-                                            color: selected
-                                                ? Colors.white
-                                                : AppColors.text,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w800,
+                                          const SizedBox(height: 3),
+                                          Text(
+                                            day.$2,
+                                            style: TextStyle(
+                                              color: selected
+                                                  ? Colors.white
+                                                  : AppColors.text,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w800,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        },
-                      ),
+                                );
+                              }).toList(),
+                            );
+                          },
+                        ),
                       const SizedBox(height: 18),
                       const Text(
                         'Open slots',
@@ -164,7 +179,7 @@ class AvailabilityPage extends StatelessWidget {
                           return Wrap(
                             spacing: gap,
                             runSpacing: gap,
-                            children: times.map((time) {
+                            children: state.timesForSelectedDay.map((time) {
                               final selected = state.selectedTime == time;
                               return SizedBox(
                                 width: width,
@@ -281,40 +296,29 @@ class AvailabilityPage extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          '${state.selectedDay} Sep · ${state.selectedTime} · ${state.meetingMode == 'Online' ? 'online' : 'on campus'}',
+                          state.selectedSlot == null
+                              ? 'Choose an open time'
+                              : '${state.selectedDay} · ${state.selectedTime} · ${state.meetingMode == 'Online' ? 'online' : 'on campus'}',
                           style: AppTextStyles.caption,
                         ),
                         const SizedBox(height: 9),
                         AppButton(
-                          label: 'Confirm booking',
-                          onPressed: () async {
-                            try {
-                              final ok = await context
-                                  .read<StudyLinkCubit>()
-                                  .confirmBooking();
-                              if (!context.mounted) return;
-                              if (ok) {
-                                context.push('/booking-confirmed');
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'That time is no longer available. Please choose another time.',
-                                    ),
-                                  ),
-                                );
-                              }
-                            } catch (_) {
-                              if (!context.mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Booking failed. Your selections have been kept. Please try again.',
-                                  ),
-                                ),
-                              );
-                            }
-                          },
+                          label: state.isSaving
+                              ? 'Booking…'
+                              : 'Confirm booking',
+                          onPressed:
+                              state.isSaving || state.selectedSlot == null
+                              ? null
+                              : () async {
+                                  // Saved in Firestore; if the slot was just
+                                  // taken, the Cubit shows a message instead.
+                                  final ok = await context
+                                      .read<StudyLinkCubit>()
+                                      .confirmBooking();
+                                  if (ok && context.mounted) {
+                                    context.push('/booking-confirmed');
+                                  }
+                                },
                         ),
                       ],
                     ),

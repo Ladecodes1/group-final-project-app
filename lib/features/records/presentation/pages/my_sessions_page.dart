@@ -21,7 +21,8 @@ class MySessionsPage extends StatelessWidget {
       backgroundColor: AppColors.background,
       bottomNavigationBar: const AppBottomNav(selectedIndex: 2),
       body: SafeArea(
-        child: Center(
+        child: Align(
+          alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
             child: ListView(
@@ -58,7 +59,7 @@ class MySessionsPage extends StatelessWidget {
                 if (past.isEmpty)
                   const AppCard(
                     child: Text(
-                      'Completed sessions will appear here.',
+                      'Past and cancelled sessions will appear here.',
                       style: AppTextStyles.body,
                     ),
                   )
@@ -72,6 +73,9 @@ class MySessionsPage extends StatelessWidget {
                           context.read<StudyLinkCubit>().prepareRating(session);
                           context.push('/rate-session', extra: session);
                         },
+                        onRemove: () => context
+                            .read<StudyLinkCubit>()
+                            .removeSession(session.id),
                       ),
                     ),
                   ),
@@ -158,9 +162,16 @@ class _UpcomingCard extends StatelessWidget {
 }
 
 class _PastCard extends StatelessWidget {
-  const _PastCard({required this.session, required this.onRate});
+  const _PastCard({
+    required this.session,
+    required this.onRate,
+    required this.onRemove,
+  });
   final StudySession session;
   final VoidCallback onRate;
+
+  /// Deletes a cancelled booking from Firestore.
+  final VoidCallback onRemove;
 
   @override
   Widget build(BuildContext context) => AppCard(
@@ -213,7 +224,9 @@ class _PastCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${session.tutorName} · ${session.mode} · ${session.time}',
+                    session.isCancelled
+                        ? '${session.tutorName} · Cancelled'
+                        : '${session.tutorName} · ${session.mode} · ${session.time}',
                     style: AppTextStyles.caption,
                   ),
                 ],
@@ -239,7 +252,28 @@ class _PastCard extends StatelessWidget {
               ),
           ],
         ),
-        if (!session.isRated) ...[
+        if (session.isCancelled) ...[
+          const SizedBox(height: 11),
+          SizedBox(
+            width: double.infinity,
+            height: 40,
+            child: OutlinedButton.icon(
+              onPressed: onRemove,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.danger,
+                side: const BorderSide(color: AppColors.dangerBorder),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              icon: const Icon(Icons.delete_outline_rounded, size: 17),
+              label: const Text(
+                'Remove',
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+              ),
+            ),
+          ),
+        ] else if (!session.isRated) ...[
           const SizedBox(height: 11),
           SizedBox(
             width: double.infinity,

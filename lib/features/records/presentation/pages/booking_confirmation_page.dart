@@ -17,7 +17,8 @@ class BookingConfirmationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<StudyLinkCubit>().state;
-    final session = state.sessions.isEmpty ? null : state.sessions.first;
+    // The booking that was just saved in Firestore.
+    final session = state.lastBooked;
     if (session == null) {
       return const Scaffold(
         body: Center(child: Text('No booking details found.')),
@@ -26,7 +27,8 @@ class BookingConfirmationPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Center(
+        child: Align(
+          alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
             child: Column(

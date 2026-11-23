@@ -27,7 +27,8 @@ class HomePage extends StatelessWidget {
       backgroundColor: AppColors.background,
       bottomNavigationBar: const AppBottomNav(selectedIndex: 0),
       body: SafeArea(
-        child: Center(
+        child: Align(
+          alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
             child: SingleChildScrollView(
@@ -211,24 +212,17 @@ class HomePage extends StatelessWidget {
                   LayoutBuilder(
                     builder: (context, constraints) {
                       final width = (constraints.maxWidth - 10) / 2;
-                      final subjects = const [
-                        (
-                          'Data Structures',
-                          '6 tutors free this week',
-                          'Data Structures & Algorithms',
-                        ),
-                        (
-                          'Discrete Maths',
-                          '4 tutors free this week',
-                          'Discrete Maths',
-                        ),
-                        (
-                          'Intro to Python',
-                          '9 tutors free this week',
-                          'Intro to Python',
-                        ),
-                        ('Statistics', '3 tutors free this week', 'Statistics'),
-                      ];
+                      // The first four subjects in Firestore.
+                      final subjects = state.subjects
+                          .take(4)
+                          .map((s) => (s.name, s.courseCode, s.id))
+                          .toList();
+                      if (subjects.isEmpty) {
+                        return Text(
+                          'No subjects yet. They will appear here once added.',
+                          style: AppTextStyles.caption,
+                        );
+                      }
                       return Wrap(
                         spacing: 10,
                         runSpacing: 10,
@@ -291,11 +285,17 @@ class HomePage extends StatelessWidget {
   }
 }
 
-/// Turns "aline.uwase@alustudent.com" into "Aline" for the greeting.
+/// Turns "aline.uwase@alustudent.com" into "Aline Uwase" for the greeting.
 String _nameFromEmail(String email) {
-  final local = email.split('@').first.split(RegExp(r'[._-]')).first;
-  if (local.isEmpty) return 'Student';
-  return local[0].toUpperCase() + local.substring(1);
+  final parts = email
+      .split('@')
+      .first
+      .split(RegExp(r'[._-]'))
+      .where((part) => part.isNotEmpty);
+  if (parts.isEmpty) return 'Student';
+  return parts
+      .map((part) => part[0].toUpperCase() + part.substring(1))
+      .join(' ');
 }
 
 class _HeroMeta extends StatelessWidget {

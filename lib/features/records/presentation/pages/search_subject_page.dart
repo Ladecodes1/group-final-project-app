@@ -3,25 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/state/study_link_cubit.dart';
-import '../../../../core/models/study_link_models.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/app_bottom_nav.dart';
 import '../../../../shared/widgets/app_card.dart';
-
-const _matchingSubjects = <(String, String, String)>[
-  (
-    'Data Structures & Algorithms',
-    'Software Engineering · 6 tutors',
-    'Data Structures & Algorithms',
-  ),
-  ('Databases & SQL', 'Software Engineering · 3 tutors', 'Databases & SQL'),
-  (
-    'Data Analysis with Python',
-    'Global Challenges · 2 tutors',
-    'Data Analysis with Python',
-  ),
-];
 
 class SearchSubjectPage extends StatelessWidget {
   const SearchSubjectPage({super.key});
@@ -30,9 +15,13 @@ class SearchSubjectPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<StudyLinkCubit>().state;
     final q = state.searchQuery.trim().toLowerCase();
+    // (name, course code, id) for every subject in Firestore.
+    final all = state.subjects
+        .map((s) => (s.name, s.courseCode, s.id))
+        .toList();
     final matches = q.isEmpty
-        ? _matchingSubjects
-        : _matchingSubjects
+        ? all
+        : all
               .where(
                 (s) =>
                     s.$1.toLowerCase().contains(q) ||
@@ -43,7 +32,8 @@ class SearchSubjectPage extends StatelessWidget {
       backgroundColor: AppColors.background,
       bottomNavigationBar: const AppBottomNav(selectedIndex: 1),
       body: SafeArea(
-        child: Center(
+        child: Align(
+          alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
             child: SingleChildScrollView(
@@ -150,11 +140,11 @@ class SearchSubjectPage extends StatelessWidget {
                   Wrap(
                     spacing: 8,
                     runSpacing: 9,
-                    children: sampleSubjects
+                    children: state.subjects
                         .map(
                           (subject) => ActionChip(
                             label: Text(
-                              subject,
+                              subject.name,
                               style: const TextStyle(
                                 color: AppColors.green,
                                 fontSize: 12,
@@ -168,7 +158,7 @@ class SearchSubjectPage extends StatelessWidget {
                             ),
                             onPressed: () {
                               context.read<StudyLinkCubit>().selectSubject(
-                                subject,
+                                subject.id,
                               );
                               context.push('/tutors');
                             },

@@ -19,4 +19,7 @@ abstract class AvailabilityRepository {
   });
 
   Future<void> deleteSlot(String slotId);
+
+  /// Reads one slot, for example to show the time of a booking.
+  Future<AvailabilitySlot> getSlot(String slotId);
 }

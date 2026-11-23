@@ -21,12 +21,12 @@ class Review extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        bookingId,
-        studentId,
-        tutorId,
-        rating,
-        comment,
-        createdAt,
-      ];
+    id,
+    bookingId,
+    studentId,
+    tutorId,
+    rating,
+    comment,
+    createdAt,
+  ];
 }

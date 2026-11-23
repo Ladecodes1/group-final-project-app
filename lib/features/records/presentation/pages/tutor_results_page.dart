@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/state/study_link_cubit.dart';
-import '../../../../core/models/study_link_models.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/empty_state.dart';
@@ -16,25 +15,26 @@ class TutorResultsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<StudyLinkCubit>().state;
     final filter = state.tutorFilter;
-    final subject = state.selectedSubject.toLowerCase();
-    final results = sampleTutors
-        .where(
-          (t) => t.subjects.any(
-            (s) =>
-                s.toLowerCase().contains(subject) ||
-                subject.contains(s.toLowerCase()),
-          ),
-        )
-        .toList();
-    final countLabel = state.selectedSubject == 'Data Structures & Algorithms'
-        ? '6 peer tutors'
-        : '${results.length} peer tutors';
-    final visible = results; // Keep booked tutors visible as muted cards, as in the Figma prototype.
+    // Tutors for the chosen subject come live from Firestore.
+    final visible = state.tutors.where((t) {
+      switch (filter) {
+        case 'Online':
+          return t.meetingModes.contains('Online');
+        case 'In person':
+          return t.meetingModes.contains('On campus');
+        default:
+          return !t.fullyBooked;
+      }
+    }).toList();
+    final countLabel = state.tutorsLoading
+        ? 'Loading tutors…'
+        : '${visible.length} peer tutor${visible.length == 1 ? '' : 's'}';
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Center(
+        child: Align(
+          alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
             child: Column(
@@ -114,7 +114,9 @@ class TutorResultsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Expanded(
-                  child: visible.isEmpty
+                  child: state.tutorsLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : visible.isEmpty
                       ? EmptyState(
                           title: 'No tutors found',
                           message: 'Try another subject or broaden your search to find a peer who can help.',

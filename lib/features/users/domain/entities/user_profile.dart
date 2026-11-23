@@ -17,11 +17,5 @@ class UserProfile extends Equatable {
   final DateTime createdAt;
 
   @override
-  List<Object?> get props => [
-        uid,
-        displayName,
-        email,
-        university,
-        createdAt,
-      ];
+  List<Object?> get props => [uid, displayName, email, university, createdAt];
 }

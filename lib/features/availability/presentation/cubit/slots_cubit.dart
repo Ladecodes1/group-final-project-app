@@ -28,18 +28,17 @@ class SlotsCubit extends Cubit<SlotsState> {
 
     _subscription = stream.listen(
       (slots) {
-        emit(SlotsState(
-          status: SlotsStatus.loaded,
-          slots: slots,
-        ));
+        emit(SlotsState(status: SlotsStatus.loaded, slots: slots));
       },
       onError: (Object error) {
-        emit(SlotsState(
-          status: SlotsStatus.error,
-          errorMessage: error is AppException
-              ? error.message
-              : 'Unable to load availability slots. Please try again.',
-        ));
+        emit(
+          SlotsState(
+            status: SlotsStatus.error,
+            errorMessage: error is AppException
+                ? error.message
+                : 'Unable to load availability slots. Please try again.',
+          ),
+        );
       },
     );
   }
