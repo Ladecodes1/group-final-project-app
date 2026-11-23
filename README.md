@@ -42,3 +42,42 @@ reviewed once.
 - State management: **BLoC / Cubit** (`flutter_bloc`) across the whole app
 - `shared_preferences` for saved settings
 - `equatable` for value equality
+
+## Architecture
+
+Each feature is split into three layers. The UI never talks to Firebase or
+storage directly; screens only show state and call BLoC/Cubit methods.
+
+```
+lib/
+  main.dart                 app start: Firebase, saved settings, providers
+  features/
+    auth/
+      domain/               AppUser, AuthRepository contract, validators
+      data/                 Firebase Auth implementation
+      presentation/         AuthBloc, login, sign-up and home pages
+    settings/
+      domain/               AppSettings, SettingsRepository contract
+      data/                 SharedPreferences implementation
+      presentation/         SettingsCubit, settings page
+test/                       unit tests
+firestore.rules             Firestore security rules
+```
+
+- **presentation:** pages, widgets and the BLoC/Cubit that holds their state.
+- **domain:** plain Dart entities, repository contracts and rules (no Flutter or
+  Firebase imports).
+- **data:** the code that actually reads and writes Firebase or the device.
+
+### Saved settings
+
+Settings are loaded from `SharedPreferences` in `main()` before the first
+screen is drawn, so they are already applied when the app reopens.
+
+| Key                    | Type   | Default   | Effect                                                             |
+| ---------------------- | ------ | --------- | ------------------------------------------------------------------ |
+| `isDarkMode`           | bool   | `false`   | Switches the app between light and dark theme                      |
+| `notificationsEnabled` | bool   | `true`    | Session reminders on/off (saved; reminders not built yet)          |
+| `language`             | String | `English` | English, French or Kinyarwanda (saved; translations not built yet) |
+
+Open them from the gear icon on the home screen.
