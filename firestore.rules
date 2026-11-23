@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // Each user can read and write only their own profile.
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Any signed-in user can browse tutors; only the owner edits their profile.
+    match /tutors/{tutorId} {
+      allow read: if signedIn();
+      allow create, update, delete: if isOwner(tutorId);
+    }
+
+    // Only the student and tutor involved can see or change a booking.
+    match /bookings/{bookingId} {
+      allow read: if signedIn() &&
+        (resource.data.studentId == request.auth.uid ||
+         resource.data.tutorId == request.auth.uid);
+      allow create: if signedIn() &&
+        request.resource.data.studentId == request.auth.uid;
+      allow update, delete: if signedIn() &&
+        (resource.data.studentId == request.auth.uid ||
+         resource.data.tutorId == request.auth.uid);
+    }
+
+    // Ratings are readable by signed-in users; only the author creates them.
+    match /ratings/{ratingId} {
+      allow read: if signedIn();
+      allow create: if signedIn() &&
+        request.resource.data.studentId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Everything else is blocked.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
