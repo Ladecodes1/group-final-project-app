@@ -69,7 +69,6 @@ android/                 Android platform setup notes (generate runner with flut
 assets/images/           App image assets
 docs/                    UI implementation notes
 firebase/                Firebase integration notes
-
 integration_test/        Mobile flow test
 lib/
   app/                   App root, router and state controller
