@@ -13,12 +13,15 @@ abstract class ReviewRemoteDataSource {
     required int rating,
     required String comment,
   });
+
   Future<ReviewModel?> getReviewForBooking(String bookingId);
+
   Future<void> updateReview({
     required String bookingId,
     required int rating,
     required String comment,
   });
+
   Future<void> deleteReview(String bookingId);
 }
 
@@ -48,24 +51,30 @@ class ReviewRemoteDataSourceImpl implements ReviewRemoteDataSource {
     await _firestore.runTransaction((tx) async {
       final booking = await tx.get(bookingRef);
       final data = booking.data();
+
       if (data == null) {
         throw const AppException('This booking no longer exists.');
       }
+
       if (data['studentId'] != studentId) {
         throw const AppException('You can only rate your own sessions.');
       }
+
       if (data['status'] != BookingStatus.completed.name) {
         throw const AppException(
           'You can rate a session after it is completed.',
         );
       }
+
       if ((await tx.get(reviewRef)).exists) {
         throw const AppException('You already rated this session.');
       }
+
       tx.set(
         reviewRef,
         ReviewModel.newDocument(
           bookingId: bookingId,
+          studentId: studentId,
           rating: rating,
           comment: comment,
         ),
