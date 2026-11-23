@@ -41,32 +41,47 @@ service cloud.firestore {
            .affectedKeys().hasOnly(['isBooked']));
     }
 
-    // Only the student or the tutor can read. A student creates a booking
-    // with their own studentId. Either party can update only the status.
+    // Only the student or tutor can read.
+    // Both can update status; only the student can update topicNote.
+    // Students can delete only their own cancelled bookings.
     match /bookings/{bookingId} {
       allow read: if signedIn() &&
         (resource.data.studentId == request.auth.uid ||
          resource.data.tutorId == request.auth.uid);
+
       allow create: if signedIn() &&
         request.resource.data.studentId == request.auth.uid;
+
       allow update: if signedIn() &&
         (resource.data.studentId == request.auth.uid ||
          resource.data.tutorId == request.auth.uid) &&
         request.resource.data.diff(resource.data)
-          .affectedKeys().hasOnly(['status']);
-      allow delete: if false;
+          .affectedKeys().hasOnly(['status', 'topicNote']) &&
+        (
+          !request.resource.data.diff(resource.data)
+            .affectedKeys().hasAny(['topicNote']) ||
+          resource.data.studentId == request.auth.uid
+        );
+
+      allow delete: if signedIn() &&
+        resource.data.studentId == request.auth.uid &&
+        resource.data.status == 'cancelled';
     }
 
-    // Any signed-in user can read. Only the student who wrote it can
-    // create or edit a review.
+    // Any signed-in user can read.
+    // Only the student who wrote a review can create, edit or delete it.
     match /reviews/{reviewId} {
       allow read: if signedIn();
+
       allow create: if signedIn() &&
         request.resource.data.studentId == request.auth.uid;
+
       allow update: if signedIn() &&
         resource.data.studentId == request.auth.uid &&
         request.resource.data.studentId == resource.data.studentId;
-      allow delete: if false;
+
+      allow delete: if signedIn() &&
+        resource.data.studentId == request.auth.uid;
     }
 
     // Everything else is blocked.
