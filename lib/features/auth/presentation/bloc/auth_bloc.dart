@@ -26,7 +26,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   final AuthRepository _authRepository;
-  late final StreamSubscription _userSubscription;
+  late final StreamSubscription<dynamic> _userSubscription;
 
   void _onUserChanged(AuthUserChanged event, Emitter<AuthState> emit) {
     emit(
@@ -52,11 +52,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _authRepository.sendEmailVerification();
       emit(
         state.copyWith(
+          isLoading: false,
           infoMessage: 'Account created. Check your email to verify it.',
         ),
       );
     } on AuthFailure catch (failure) {
-      emit(state.copyWith(errorMessage: failure.message));
+      emit(state.copyWith(isLoading: false, errorMessage: failure.message));
     }
   }
 
@@ -70,9 +71,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
       );
-      emit(state.copyWith());
+      emit(state.copyWith(isLoading: false));
     } on AuthFailure catch (failure) {
-      emit(state.copyWith(errorMessage: failure.message));
+      emit(state.copyWith(isLoading: false, errorMessage: failure.message));
     }
   }
 
@@ -83,9 +84,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(isLoading: true));
     try {
       await _authRepository.signInWithGoogle();
-      emit(state.copyWith());
+      emit(state.copyWith(isLoading: false));
     } on AuthFailure catch (failure) {
-      emit(state.copyWith(errorMessage: failure.message));
+      emit(state.copyWith(isLoading: false, errorMessage: failure.message));
     }
   }
 
@@ -105,11 +106,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _authRepository.sendPasswordReset(event.email);
       emit(
         state.copyWith(
+          isLoading: false,
           infoMessage: 'Password reset email sent. Check your inbox.',
         ),
       );
     } on AuthFailure catch (failure) {
-      emit(state.copyWith(errorMessage: failure.message));
+      emit(state.copyWith(isLoading: false, errorMessage: failure.message));
     }
   }
 
