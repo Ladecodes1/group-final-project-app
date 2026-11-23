@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
+import '../../../settings/presentation/pages/settings_page.dart';
 
 /// Shown after signing in.
 class HomePage extends StatelessWidget {
@@ -15,6 +16,13 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('StudyLink'),
         actions: [
+          IconButton(
+            tooltip: 'Settings',
+            icon: const Icon(Icons.settings),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const SettingsPage()),
+            ),
+          ),
           IconButton(
             tooltip: 'Log out',
             icon: const Icon(Icons.logout),
