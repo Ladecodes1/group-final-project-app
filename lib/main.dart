@@ -10,6 +10,7 @@ import 'features/auth/presentation/bloc/auth_state.dart';
 import 'features/auth/presentation/pages/home_page.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/settings/data/settings_repository_impl.dart';
+import 'features/settings/domain/app_settings.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 
 Future<void> main() async {
@@ -39,23 +40,37 @@ class StudyLinkApp extends StatelessWidget {
             create: (_) => SettingsCubit(SettingsRepositoryImpl(prefs)),
           ),
         ],
-        child: MaterialApp(
-          title: 'StudyLink',
-          theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
-          home: BlocBuilder<AuthBloc, AuthState>(
-            buildWhen: (previous, current) => previous.status != current.status,
-            builder: (context, state) {
-              switch (state.status) {
-                case AuthStatus.unknown:
-                  return const Scaffold(
-                    body: Center(child: CircularProgressIndicator()),
-                  );
-                case AuthStatus.authenticated:
-                  return const HomePage();
-                case AuthStatus.unauthenticated:
-                  return const LoginPage();
-              }
-            },
+        child: BlocBuilder<SettingsCubit, AppSettings>(
+          buildWhen: (previous, current) =>
+              previous.isDarkMode != current.isDarkMode,
+          builder: (context, settings) => MaterialApp(
+            title: 'StudyLink',
+            theme: ThemeData(
+              colorSchemeSeed: Colors.indigo,
+              useMaterial3: true,
+            ),
+            darkTheme: ThemeData(
+              colorSchemeSeed: Colors.indigo,
+              brightness: Brightness.dark,
+              useMaterial3: true,
+            ),
+            themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            home: BlocBuilder<AuthBloc, AuthState>(
+              buildWhen: (previous, current) =>
+                  previous.status != current.status,
+              builder: (context, state) {
+                switch (state.status) {
+                  case AuthStatus.unknown:
+                    return const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
+                    );
+                  case AuthStatus.authenticated:
+                    return const HomePage();
+                  case AuthStatus.unauthenticated:
+                    return const LoginPage();
+                }
+              },
+            ),
           ),
         ),
       ),
